@@ -1,0 +1,3 @@
+[submodule "monero-gui"]
+	path = monero-gui
+	url = git@github.com:monero-project/monero-gui.git
