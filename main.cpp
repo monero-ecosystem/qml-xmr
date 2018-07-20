@@ -64,6 +64,7 @@
 #include <QDir>
 #include <QString>
 #include <QFileInfo>
+#include <oscursor.h>
 
 
 //#define USE_ApplicationEngine
@@ -250,7 +251,6 @@ LiveReload::LiveReload(QQmlEngine * a_engine_handler
 	qxView = a_qxView;
 	component = a_component;
 	options = a_options;
-
 //#ifdef USE_ApplicationEngine
 //	engine_handler = qobject_cast<QQmlApplicationEngine *>(createWindow(engine_handler, qxView, component, options));
 //#else
@@ -514,8 +514,7 @@ static void loadDummyDataFiles(QQmlEngine &engine, const QString& directory)
 
 static void usage()
 {
-	puts("Usage: qmlscene [options] <filename>");
-	puts(" ");
+	puts("Usage: qml-xmr [options] <filename>");
 	puts(" Options:");
 	puts("  --maximized ............................... Run maximized");
 	puts("  --fullscreen .............................. Run fullscreen");
@@ -626,6 +625,9 @@ int main(int argc, char ** argv)
 			// TODO: as soon as the engine construction completes, the debug service is
 			// listening for connections.  But actually we aren't ready to debug anything.
 			QQmlEngine engine;
+			OSCursor cursor;
+			engine.rootContext()->setContextProperty("globalCursor", &cursor);
+			engine.rootContext()->setContextProperty("qt_version_str", QT_VERSION_STR);
 			for (int i = 0; i < imports.size(); ++i)
 				engine.addImportPath(imports.at(i));
 			for (int i = 0; i < pluginPaths.size(); ++i)
