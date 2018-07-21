@@ -186,6 +186,10 @@ ApplicationWindow {
         }
     }
 
+    function releaseFocus(){
+        return;
+    }
+
     Component.onCompleted: {
         console.log("Started AppWindow");
         console.log("QT runtime: " + appWindow.qtRuntimeVersion);
