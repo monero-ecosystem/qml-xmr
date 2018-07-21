@@ -1,0 +1,2 @@
+var GUI_VERSION = "0.12.3";
+var GUI_MONERO_VERSION = "0.12.3";
