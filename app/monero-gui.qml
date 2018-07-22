@@ -85,7 +85,10 @@ ApplicationWindow {
         }
     }
     property var translationManager: {
-        'emptyString': ''
+        'emptyString': '',
+        'setLanguage': function(lang){
+            console.log('setLanguage() -> ' + lang)
+        }
     };
 
     objectName: "appWindow"
