@@ -31,6 +31,9 @@
 **
 ****************************************************************************/
 
+#include <time.h>
+#include <stdlib.h>
+
 #include <QtCore/qabstractanimation.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qmath.h>
@@ -114,16 +117,29 @@ QQuickWindow * createWindow(QQmlEngine * engine_handler
 				  , QQuickWindow * window = NULL
 				  ){
 
-//	if ( !component->isReady() ) {
-//		fprintf(stderr, "%s\n", qPrintable(component->errorString()));
-//		return -1;
-//	}
+	if ( !component->isReady() ) {
+		QStringList list {
+			"¯\\_(ツ)_/¯",
+			"̿༼ つ ◕_◕ ༽つ",
+			"(ノಠ益ಠ)ノ彡┻━┻",
+			"ლ(ಠ益ಠლ)",
+			"┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻",
+			"(¬_¬)",
+			"╚(ಠ_ಠ)=┐",
+			"ಠ╭╮ಠ",
+			"(ง'̀-'́)ง"};
+
+		fprintf(stderr, "QML Error %s\n%s\n",
+				qPrintable(list[rand()%(list.size()-1)+0]),
+				qPrintable(component->errorString()));
+		exit(0);
+	}
 
 	QObject *topLevel = component->create();
-//	if (!topLevel && component->isError()) {
-//		fprintf(stderr, "%s\n", qPrintable(component->errorString()));
-//		return -1;
-//	}
+	if (!topLevel && component->isError()) {
+		fprintf(stderr, "Error:\n%s\n", qPrintable(component->errorString()));
+		exit(0);
+	}
 
 	QQuickWindow * r_window;
 
@@ -136,7 +152,6 @@ QQuickWindow * createWindow(QQmlEngine * engine_handler
 	window = qobject_cast<QQuickWindow *>(topLevel);
 	r_window = window;
 	qDebug() << r_window << window;
-
 
 	if (window) {
 #ifdef USE_ApplicationEngine
@@ -535,6 +550,7 @@ static void usage()
 
 int main(int argc, char ** argv)
 {
+	srand(time(NULL));
 	Options options;
 
 	QStringList imports;
@@ -626,6 +642,7 @@ int main(int argc, char ** argv)
 			// listening for connections.  But actually we aren't ready to debug anything.
 			QQmlEngine engine;
 			OSCursor cursor;
+
 			engine.rootContext()->setContextProperty("globalCursor", &cursor);
 			engine.rootContext()->setContextProperty("qt_version_str", QT_VERSION_STR);
 			for (int i = 0; i < imports.size(); ++i)
@@ -644,9 +661,7 @@ int main(int argc, char ** argv)
 			QPointer<QQmlComponent> component = new QQmlComponent(&engine);
 			component->loadUrl(options.file);
 			QQuickView* qxView = new QQuickView(&engine, NULL);
-
 			LiveReload liver(&engine, qxView, component, options);
-
 			if (options.quitImmediately)
 				QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
 
