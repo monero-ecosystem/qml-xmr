@@ -18,6 +18,7 @@ The recommended way is to use the Sublime Text 3 to edit `app/Mock.qml`, then co
 
 - Sublime Text 3 or any other IDE
 - Qt 5.7
+- CMake >= 3.10
 
 ```
 qmake --version
@@ -34,16 +35,26 @@ First compile `qml-xmr`:
 
 ```
 cd qml-xmr
+cmake . && make && sudo make install
+```
+
+Or if you prefer `qmake`:
+
+
+```
+cd qml-xmr
 qmake
 sudo make
 ```
 
-It'll be installed into `/usr/local/bin/qml-xmr`.
+Compiled binary will be found at `/usr/local/bin/qml-xmr`.
 
 Update the `monero-gui` submodule:
 
-> git submodule init
-> git submodule update
+```
+git submodule init
+git submodule update
+```
 
 Launch Sublime Text 3 and make a new build system:
 
