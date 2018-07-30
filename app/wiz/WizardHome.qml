@@ -16,6 +16,8 @@
 
 
 import "../mock/Windows.js" as Windows
+import "../mock/NetworkType.js" as NetworkType
+import "../mock/Watch.js" as Watch
 import "../components"
 import "../components" as MoneroComponents
 
@@ -28,7 +30,7 @@ Rectangle {
     id: wizardHome
     Layout.fillWidth: true
     color: "transparent"
-
+    property string fontColorDimmed: "#c0c0c0"
     // Rectangle {
     //     color: "#242424"
     //     anchors.fill: parent
@@ -51,23 +53,31 @@ Rectangle {
 
     ColumnLayout {
         id: root
-        anchors.margins: (isMobile)? 17 : 20
-        anchors.topMargin: 120
+        anchors.margins: (isMobile)? 17 * scaleRatio  : 20 * scaleRatio
+        anchors.topMargin: 100 * scaleRatio
 
         Layout.fillWidth: true
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.leftMargin: 100
-        anchors.rightMargin: 100
+        anchors.leftMargin: 100 * scaleRatio
+        anchors.rightMargin: 100 * scaleRatio
 
         spacing: 0 * scaleRatio
 
         Text {
-            text: "How do you want to start?"
+            text: "Welcome to Monero!"
             color: "white"
             font.pixelSize: (isMobile)? 16 * scaleRatio : 36 * scaleRatio
             Layout.fillWidth: true
+        }
+
+        Text {
+            text: "Please select one of the following options:"
+            color: wizardHome.fontColorDimmed
+            font.pixelSize: (isMobile)? 14 * scaleRatio : 16 * scaleRatio
+            Layout.fillWidth: true
+            Layout.topMargin: 8 * scaleRatio
         }
 
         GridLayout {
@@ -111,6 +121,7 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         console.log('x1');
+                        console.log(Watch.wow.x);
                     }
                 }
             }
@@ -140,7 +151,7 @@ Rectangle {
                     Layout.topMargin: 8 * scaleRatio
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "From keys or mnemonic seed"
-                    color: "#c0c0c0"
+                    color: wizardHome.fontColorDimmed
                     font.pixelSize: 14 * scaleRatio
                 }
 
@@ -183,7 +194,7 @@ Rectangle {
                 Text {
                     Layout.topMargin: 8 * scaleRatio
                     text: "From a local wallet file"
-                    color: "#c0c0c0"
+                    color: wizardHome.fontColorDimmed
                     font.pixelSize: 14 * scaleRatio
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
@@ -294,8 +305,64 @@ Rectangle {
                         }
                     }
                 }
-            }
 
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    MoneroComponents.Label {
+                        id: transactionPriority
+                        Layout.topMargin: 14
+                        text: qsTr("Transaction priority") + translationManager.emptyString
+                        fontBold: false
+                        fontSize: 16
+                    }
+                    // Note: workaround for translations in listElements
+                    // ListElement: cannot use script for property value, so
+                    // code like this wont work:
+                    // ListElement { column1: qsTr("LOW") + translationManager.emptyString ; column2: ""; priority: PendingTransaction.Priority_Low }
+                    // For translations to work, the strings need to be listed in
+                    // the file components/StandardDropdown.qml too.
+
+                    // Priorites after v5
+                    ListModel {
+                        id: jemoeder
+
+                        ListElement { column1: qsTr("Mainnet") ; column2: ""; nettype: "mainnet"}
+                        ListElement { column1: qsTr("Stagenet") ; column2: ""; nettype: "stagenet"}
+                        ListElement { column1: qsTr("Testnet") ; column2: ""; nettype: "testnet"}
+
+                        Component.onCompleted: {
+                            // append({"display_name": "English (US)", "locale": "en_US", "wallet_language": "English", "qs": "none"});
+                            // append({"display_name": "Deutsch", "locale": "de_DE", "wallet_language": "Deutsch", "qs": "none"});
+                            // append({"display_name": "Esperanto", "locale": "eo", "wallet_language": "Esperanto", "qs": "none"});
+                            // append({"display_name": "Español", "locale": "es_ES", "wallet_language": "Español", "qs": "none"});
+                        }
+                    }
+
+                    MoneroComponents.StandardDropdown {
+                        dataModel: jemoeder
+                        Layout.fillWidth: true
+                        Layout.topMargin: 6
+                        shadowReleasedColor: "#FF4304"
+                        shadowPressedColor: "#B32D00"
+                        releasedColor: "#363636"
+                        pressedColor: "#202020"
+
+                        onChanged: {                            
+                            var item = dataModel.get(currentIndex).nettype.toLowerCase();
+                            if(item === "mainnet"){
+                                persistentSettings.nettype = NetworkType.MAINNET
+                            } else if(item === "stagenet"){
+                                persistentSettings.nettype = NetworkType.STAGENET
+                            } else if(item === "testnet"){
+                                persistentSettings.nettype = NetworkType.TESTNET
+                            }
+                        }
+                    }
+
+                    // Make sure dropdown is on top
+                    z: parent.z + 1
+                }
+            }
         }
     }
 }

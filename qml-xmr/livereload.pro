@@ -3,10 +3,10 @@ TARGET = /usr/local/bin/qml-xmr
 SOURCES += main.cpp
 
 HEADERS += \
-    test/oscursor.h
+    oscursor.h
 
 SOURCES += \
-    test/oscursor.cpp
+    oscursor.cpp
 
 QT += qml quick
 mac: {

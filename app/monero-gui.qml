@@ -10,7 +10,9 @@ import "components" as MoneroComponents
 import "wiz"
 import "mock/Windows.js" as Windows
 import "mock/Version.js" as Version
-
+import "mock/NetworkType.js" as NetworkType
+import "mock/Watch.js" as Watch
+import "mock"
 
 ApplicationWindow {
     id: appWindow
@@ -18,7 +20,12 @@ ApplicationWindow {
     width: 940
     height: 800
 
+    SetInterval {
+        id: lol
+    }
+
     // mocks
+    property var watcher
     property var currentItem
     property bool whatIsEnable: false
     property bool ctrlPressed: false
@@ -64,6 +71,7 @@ ApplicationWindow {
         "language": "English (US)",
         "locale": "en_US"
     }
+
     property var daemonManager: {
         "sendCommand": function(){
             return 'ok';
@@ -198,5 +206,12 @@ ApplicationWindow {
     Component.onCompleted: {
         console.log("Started AppWindow");
         console.log("QT runtime: " + appWindow.qtRuntimeVersion);
+
+        // function createTimer(ms){
+        //     return Qt.createQmlObject("import QtQuick 2.7; import QtQuick.Layouts 1.2; import QtQuick.Controls 2.0; Timer { interval: "+ms+"; running: true; repeat: true; signal onTriggeredState; onTriggered: onTriggeredState(); }", appWindow);
+        //     // var ctx = Qt.createComponent(timer);
+        // }
+
+        console.log(Watch.wow.x);
     }
 }

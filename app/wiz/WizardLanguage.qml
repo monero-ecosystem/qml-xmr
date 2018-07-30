@@ -280,6 +280,7 @@ Rectangle {
                 text: "Continue"
 
                 onClicked: {
+                    console.log('x');
                     wizardStateView.state = "Home"
                 }
             }

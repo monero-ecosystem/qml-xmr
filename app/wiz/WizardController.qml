@@ -12,7 +12,9 @@ import "../wiz"
 Item {
     id: wizardController
     anchors.fill: parent
-
+    property var wizardState: {
+        "currentView": wizardStateView.currentView
+    }
     Image {
         opacity: 1.0
         anchors.fill: parent
@@ -59,7 +61,7 @@ Item {
 
         StackView {
             id: stackView
-            initialItem: wizardStateView.wizardLanguageView
+            initialItem: wizardStateView.wizardHomeView
             anchors.fill: parent
             clip: false
 
