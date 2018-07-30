@@ -1,20 +1,20 @@
-import "mock/Windows.js" as Windows
-import "components"
-import "components" as MoneroComponents
+import "../mock/Windows.js" as Windows
+import "../components"
+import "../components" as MoneroComponents
 
 import QtQuick 2.7
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0
 
 
-Rectangle{
-    anchors.fill: parent
+Rectangle {
+    Layout.fillWidth: true
     color: "black"
 
     Image {
         opacity: sideBar.position == 0 ? 1.0 : 0.2
         anchors.fill: parent
-        source: "images/middlePanelBg.jpg"
+        source: "../images/middlePanelBg.jpg"
     }
 
     ColumnLayout {
@@ -73,7 +73,7 @@ Rectangle{
                         // button gradient while checked
                         Image {
                             anchors.fill: parent
-                            source: "images/menuButtonGradient.png"
+                            source: "../images/menuButtonGradient.png"
                             opacity: 0.75
                             visible: true
 
@@ -143,7 +143,7 @@ Rectangle{
 
         Image {
             id: globe
-            source: "img/world-flags-globe.png"
+            source: "../img/world-flags-globe.png"
             opacity: 0
             property bool small: appWindow.width < 700 ? true : false
             property int size: {
@@ -280,7 +280,7 @@ Rectangle{
                 text: "Continue"
 
                 onClicked: {
-                    sideBar.open();
+                    wizardStateView.state = "Home"
                 }
             }
 

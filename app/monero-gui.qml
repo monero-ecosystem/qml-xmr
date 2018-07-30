@@ -1,12 +1,13 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
 
 import "."
 import "components"
 import "components" as MoneroComponents
+import "wiz"
 import "mock/Windows.js" as Windows
 import "mock/Version.js" as Version
 
@@ -59,7 +60,9 @@ ApplicationWindow {
         "customDecorations": true,
         'useRemoteNode': true,
         "daemonFlags": "--log testflag",
-        "logLevel": 2
+        "logLevel": 2,
+        "language": "English (US)",
+        "locale": "en_US"
     }
     property var daemonManager: {
         "sendCommand": function(){
@@ -97,8 +100,7 @@ ApplicationWindow {
     // flags: persistentSettings.customDecorations ? Windows.flagsCustomDecorations : Windows.flags
     flags: Windows.flagsCustomDecorations
 
-    // Mock.qml
-    Mock {}
+    WizardController {}
 
     MouseArea {
         id: resizeArea

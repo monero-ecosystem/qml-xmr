@@ -30,3 +30,6 @@
 .idea*
 .qmake*
 *.moc
+CMakeFiles*
+qml-xmr_autogen*
+Makefile*
