@@ -11,7 +11,7 @@ import "wiz"
 import "mock/Windows.js" as Windows
 import "mock/Version.js" as Version
 import "mock/NetworkType.js" as NetworkType
-import "mock/Watch.js" as Watch
+import "js/Settings.js" as Settings
 import "mock"
 
 ApplicationWindow {
@@ -211,7 +211,5 @@ ApplicationWindow {
         //     return Qt.createQmlObject("import QtQuick 2.7; import QtQuick.Layouts 1.2; import QtQuick.Controls 2.0; Timer { interval: "+ms+"; running: true; repeat: true; signal onTriggeredState; onTriggered: onTriggeredState(); }", appWindow);
         //     // var ctx = Qt.createComponent(timer);
         // }
-
-        console.log(Watch.wow.x);
     }
 }

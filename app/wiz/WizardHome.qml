@@ -17,7 +17,7 @@
 
 import "../mock/Windows.js" as Windows
 import "../mock/NetworkType.js" as NetworkType
-import "../mock/Watch.js" as Watch
+import "../js/Settings.js" as Settings
 import "../components"
 import "../components" as MoneroComponents
 
@@ -121,7 +121,8 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         console.log('x1');
-                        console.log(Watch.wow.x);
+                        Settings.currentState = "wizardTest";
+                        wizardStateView.state = "wizardTest";
                     }
                 }
             }
@@ -235,8 +236,6 @@ Rectangle {
             Layout.fillWidth: true
 
             ColumnLayout {
-                Layout.leftMargin: wizardLeftMargin
-                Layout.rightMargin: wizardRightMargin
                 Layout.topMargin: 30 * scaleRatio
                 Layout.alignment: Qt.AlignCenter
                 Layout.fillWidth: true

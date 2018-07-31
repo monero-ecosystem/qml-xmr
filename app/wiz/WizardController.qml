@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
 import "../js/Windows.js" as Windows
 import "../js/Utils.js" as Utils
+import "../js/Settings.js" as Settings
 import "../components" as MoneroComponents
 import "../pages"
 import "../wiz"
@@ -12,9 +13,7 @@ import "../wiz"
 Item {
     id: wizardController
     anchors.fill: parent
-    property var wizardState: {
-        "currentView": wizardStateView.currentView
-    }
+
     Image {
         opacity: 1.0
         anchors.fill: parent
@@ -28,10 +27,15 @@ Item {
         property WizardLanguage wizardLanguageView: WizardLanguage { }
         property WizardHome wizardHomeView: WizardHome { }
         anchors.fill: parent
+
+        Component.onCompleted: {
+
+        }
+
         // Layout.preferredWidth: wizardController.width
         // Layout.preferredHeight: wizardController.height
         color: "transparent"
-        state: "Home"
+        state: Settings.currentState
 
         onCurrentViewChanged: {
             if (previousView) {
@@ -49,13 +53,21 @@ Item {
             }
         }
 
+        function x(x){
+            console.log(x);
+            return "lol"
+        }
+
         states: [
             State {
-                name: "Language"
+                name: "wizardLanguage"
                 PropertyChanges { target: wizardStateView; currentView: wizardStateView.wizardLanguageView }
             }, State {
-                name: "Home"
+                name: "wizardHome"
                 PropertyChanges { target: wizardStateView; currentView: wizardStateView.wizardHomeView }
+            }, State {
+                name: "wizardTest"
+                PropertyChanges { target: wizardStateView; currentView: x(parent.name); }
             }
         ]
 
