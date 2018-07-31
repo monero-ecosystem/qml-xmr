@@ -42,26 +42,20 @@ Rectangle {
     //     source: "../images/middlePanelBg.jpg"
     // }
 
-    Rectangle {
-        Layout.topMargin: 0 * scaleRatio
-        Layout.bottomMargin: 0 * scaleRatio
-        Layout.preferredHeight: 5
-        Layout.fillWidth: true
-        color: MoneroComponents.Style.dividerColor
-        opacity: MoneroComponents.Style.dividerOpacity
-    }
+    // Rectangle {
+    //     Layout.topMargin: 0 * scaleRatio
+    //     Layout.bottomMargin: 0 * scaleRatio
+    //     Layout.preferredHeight: 5
+    //     Layout.fillWidth: true
+    //     color: MoneroComponents.Style.dividerColor
+    //     opacity: MoneroComponents.Style.dividerOpacity
+    // }
 
     ColumnLayout {
         id: root
-        // anchors.margins: (isMobile)? 17 * scaleRatio  : 20 * scaleRatio
-        // anchors.topMargin: 100 * scaleRatio
-
-        // Layout.fillWidth: true
-        // anchors.left: parent.left
-        // anchors.top: parent.top
-        // anchors.right: parent.right
-        // anchors.leftMargin: 100 * scaleRatio
-        // anchors.rightMargin: 100 * scaleRatio
+        
+        // anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
 
         spacing: 0 * scaleRatio
 
@@ -82,32 +76,31 @@ Rectangle {
 
         GridLayout {
             columns: (isMobile)? 1 : 3
-            anchors.horizontalCenter: parent.horizontalCenter
             Layout.fillWidth: true
+            // anchors.horizontalCenter: parent.horizontalCenter
             columnSpacing: 92 * scaleRatio
 
             ColumnLayout {
                 spacing: 0
-                Layout.preferredHeight: 200
-                Layout.fillWidth: true
 
-                Rectangle {
-                    color: "red"
-                    anchors.fill: parent
-                }
+                Layout.fillWidth: true
+                Layout.minimumWidth: 72 * scaleRatio
+                Layout.maximumWidth: 120 * scaleRatio
+                Layout.preferredHeight: height
+
+                id: xx35
 
                 Image {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
                     Layout.preferredWidth: 50
                     Layout.preferredHeight: 50
-                    
+                    anchors.horizontalCenter: parent.horizontalCenter
                     source: "../img/wizardWallet.png"
                 }
 
                 Text {
-                    Layout.topMargin: 70
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    Layout.topMargin: 20
+                    Layout.fillWidth: true
+                    
                     text: "Create a new wallet"
                     font.pixelSize: 15 * scaleRatio
                     color: "white"
@@ -115,7 +108,8 @@ Rectangle {
 
                 Text {
                     Layout.topMargin: 8 * scaleRatio
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    Layout.fillWidth: true
+
                     text: ""
                     font.pixelSize: 14 * scaleRatio
                 }
@@ -132,88 +126,88 @@ Rectangle {
                 }
             }
 
-            ColumnLayout {
-                spacing: 0
-                Layout.fillWidth: true
+            // ColumnLayout {
+            //     spacing: 0
+            //     Layout.fillWidth: true
 
-                Image {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    Layout.preferredWidth: 50
-                    Layout.preferredHeight: 50
+            //     Image {
+            //         anchors.horizontalCenter: parent.horizontalCenter
+            //         anchors.verticalCenter: parent.verticalCenter
+            //         Layout.preferredWidth: 50
+            //         Layout.preferredHeight: 50
                     
-                    source: "../img/local@3x.png"
-                }
+            //         source: "../img/local@3x.png"
+            //     }
 
-                Text {
-                    Layout.topMargin: 70
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: "Restore wallet"
-                    font.pixelSize: 15 * scaleRatio
-                    color: "white"
-                }
+            //     Text {
+            //         Layout.topMargin: 70
+            //         anchors.horizontalCenter: parent.horizontalCenter
+            //         text: "Restore wallet"
+            //         font.pixelSize: 15 * scaleRatio
+            //         color: "white"
+            //     }
 
-                Text {
-                    Layout.topMargin: 8 * scaleRatio
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: "From keys or mnemonic seed"
-                    color: wizardHome.fontColorDimmed
-                    font.pixelSize: 14 * scaleRatio
-                }
+            //     Text {
+            //         Layout.topMargin: 8 * scaleRatio
+            //         anchors.horizontalCenter: parent.horizontalCenter
+            //         text: "From keys or mnemonic seed"
+            //         color: wizardHome.fontColorDimmed
+            //         font.pixelSize: 14 * scaleRatio
+            //     }
 
-                MouseArea{
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        console.log('x2');
-                    }
-                }
-            }
+            //     MouseArea{
+            //         anchors.fill: parent
+            //         hoverEnabled: true
+            //         cursorShape: Qt.PointingHandCursor
+            //         onClicked: {
+            //             console.log('x2');
+            //         }
+            //     }
+            // }
 
-            ColumnLayout {
-                spacing: 0
-                Layout.fillWidth: true
+            // ColumnLayout {
+            //     spacing: 0
+            //     Layout.fillWidth: true
 
-                Item {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    Layout.preferredWidth: 50
-                    Layout.preferredHeight: 50
+            //     Item {
+            //         anchors.horizontalCenter: parent.horizontalCenter
+            //         anchors.verticalCenter: parent.verticalCenter
+            //         Layout.preferredWidth: 50
+            //         Layout.preferredHeight: 50
 
-                    Image {
-                        id: xx3
-                        width: 41
-                        height: 50
-                        source: "../img/remote@3x.png"
-                    }
-                }
+            //         Image {
+            //             id: xx35
+            //             width: 41
+            //             height: 50
+            //             source: "../img/remote@3x.png"
+            //         }
+            //     }
 
-                Text {
-                    Layout.topMargin: 70
-                    text: "Open an existing wallet"
-                    font.pixelSize: 15 * scaleRatio
-                    color: "white"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
+            //     Text {
+            //         Layout.topMargin: 70
+            //         text: "Open an existing wallet"
+            //         font.pixelSize: 15 * scaleRatio
+            //         color: "white"
+            //         anchors.horizontalCenter: parent.horizontalCenter
+            //     }
 
-                Text {
-                    Layout.topMargin: 8 * scaleRatio
-                    text: "From a local wallet file"
-                    color: wizardHome.fontColorDimmed
-                    font.pixelSize: 14 * scaleRatio
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
+            //     Text {
+            //         Layout.topMargin: 8 * scaleRatio
+            //         text: "From a local wallet file"
+            //         color: wizardHome.fontColorDimmed
+            //         font.pixelSize: 14 * scaleRatio
+            //         anchors.horizontalCenter: parent.horizontalCenter
+            //     }
 
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        console.log('x3');
-                    }
-                }
-            }
+            //     MouseArea {
+            //         anchors.fill: parent
+            //         hoverEnabled: true
+            //         cursorShape: Qt.PointingHandCursor
+            //         onClicked: {
+            //             console.log('x3');
+            //         }
+            //     }
+            // }
         }
 
         Rectangle {
@@ -230,6 +224,14 @@ Rectangle {
             small: true
             onClicked: {
                 wizardStateView.state = "wizardLanguage"
+            }
+        }
+
+        MoneroComponents.StandardButton {
+            text: "height"
+            small: true
+            onClicked: {
+                console.log(xx35.height);
             }
         }
 
