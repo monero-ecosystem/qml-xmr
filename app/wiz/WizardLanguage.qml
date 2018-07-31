@@ -281,7 +281,8 @@ Rectangle {
 
                 onClicked: {
                     console.log('x');
-                    wizardStateView.state = "Home"
+                    console.log(wizardStateView.state);
+                    wizardStateView.state = "wizardHome"
                 }
             }
 

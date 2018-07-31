@@ -11,7 +11,7 @@ import "wiz"
 import "mock/Windows.js" as Windows
 import "mock/Version.js" as Version
 import "mock/NetworkType.js" as NetworkType
-import "js/Settings.js" as Settings
+import "mock/Settings.js" as Settings
 import "mock"
 
 ApplicationWindow {

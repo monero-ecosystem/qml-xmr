@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
 import "../js/Windows.js" as Windows
 import "../js/Utils.js" as Utils
-import "../js/Settings.js" as Settings
+import "../mock/Settings.js" as Settings
 import "../components" as MoneroComponents
 import "../pages"
 import "../wiz"
@@ -26,6 +26,7 @@ Item {
         property Item previousView
         property WizardLanguage wizardLanguageView: WizardLanguage { }
         property WizardHome wizardHomeView: WizardHome { }
+        property WizardTest wizardTestView: WizardTest { }
         anchors.fill: parent
 
         Component.onCompleted: {
@@ -35,7 +36,7 @@ Item {
         // Layout.preferredWidth: wizardController.width
         // Layout.preferredHeight: wizardController.height
         color: "transparent"
-        state: Settings.currentState
+        state: Settings.defaultState
 
         onCurrentViewChanged: {
             if (previousView) {
@@ -53,11 +54,6 @@ Item {
             }
         }
 
-        function x(x){
-            console.log(x);
-            return "lol"
-        }
-
         states: [
             State {
                 name: "wizardLanguage"
@@ -67,13 +63,13 @@ Item {
                 PropertyChanges { target: wizardStateView; currentView: wizardStateView.wizardHomeView }
             }, State {
                 name: "wizardTest"
-                PropertyChanges { target: wizardStateView; currentView: x(parent.name); }
+                PropertyChanges { target: wizardStateView; currentView: wizardStateView.wizardTestView }
             }
         ]
 
         StackView {
             id: stackView
-            initialItem: wizardStateView.wizardHomeView
+            initialItem: wizardStateView.wizardLanguageView;
             anchors.fill: parent
             clip: false
 

@@ -17,7 +17,7 @@
 
 import "../mock/Windows.js" as Windows
 import "../mock/NetworkType.js" as NetworkType
-import "../js/Settings.js" as Settings
+import "../mock/Settings.js" as Settings
 import "../components"
 import "../components" as MoneroComponents
 
@@ -53,15 +53,15 @@ Rectangle {
 
     ColumnLayout {
         id: root
-        anchors.margins: (isMobile)? 17 * scaleRatio  : 20 * scaleRatio
-        anchors.topMargin: 100 * scaleRatio
+        // anchors.margins: (isMobile)? 17 * scaleRatio  : 20 * scaleRatio
+        // anchors.topMargin: 100 * scaleRatio
 
-        Layout.fillWidth: true
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.leftMargin: 100 * scaleRatio
-        anchors.rightMargin: 100 * scaleRatio
+        // Layout.fillWidth: true
+        // anchors.left: parent.left
+        // anchors.top: parent.top
+        // anchors.right: parent.right
+        // anchors.leftMargin: 100 * scaleRatio
+        // anchors.rightMargin: 100 * scaleRatio
 
         spacing: 0 * scaleRatio
 
@@ -88,7 +88,13 @@ Rectangle {
 
             ColumnLayout {
                 spacing: 0
+                Layout.preferredHeight: 200
                 Layout.fillWidth: true
+
+                Rectangle {
+                    color: "red"
+                    anchors.fill: parent
+                }
 
                 Image {
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -121,7 +127,6 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         console.log('x1');
-                        Settings.currentState = "wizardTest";
                         wizardStateView.state = "wizardTest";
                     }
                 }
@@ -218,6 +223,14 @@ Rectangle {
             Layout.fillWidth: true
             color: MoneroComponents.Style.dividerColor
             opacity: MoneroComponents.Style.dividerOpacity
+        }
+
+        MoneroComponents.StandardButton {
+            text: "pick language"
+            small: true
+            onClicked: {
+                wizardStateView.state = "wizardLanguage"
+            }
         }
 
         MoneroComponents.CheckBox2 {

@@ -1,0 +1,20 @@
+<html>
+<head>
+<script src="x.js"></script>
+</head>
+
+<body>
+    <script>
+        var obj = {
+            "p": 1,
+            "o": 2
+        }
+
+        watch(obj, function(){
+            console.log("attr2 or attr3 changed!");
+        });
+
+        obj.p = 2;
+    </script>
+</body>
+</html>
