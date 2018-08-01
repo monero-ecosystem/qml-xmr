@@ -53,7 +53,7 @@ Rectangle {
 
     ColumnLayout {
         id: root
-        
+
         // anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -81,14 +81,19 @@ Rectangle {
             columnSpacing: 92 * scaleRatio
 
             ColumnLayout {
+                id: xx35
                 spacing: 0
 
                 Layout.fillWidth: true
                 Layout.minimumWidth: 72 * scaleRatio
-                Layout.maximumWidth: 120 * scaleRatio
+                Layout.maximumWidth: 150 * scaleRatio
                 Layout.preferredHeight: height
 
-                id: xx35
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "red"
+                }
 
                 Image {
                     Layout.preferredWidth: 50
@@ -99,8 +104,8 @@ Rectangle {
 
                 Text {
                     Layout.topMargin: 20
-                    Layout.fillWidth: true
-                    
+                    anchors.horizontalCenter: parent.horizontalCenter
+
                     text: "Create a new wallet"
                     font.pixelSize: 15 * scaleRatio
                     color: "white"
@@ -114,6 +119,11 @@ Rectangle {
                     font.pixelSize: 14 * scaleRatio
                 }
 
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "red"
+                }
 
                 MouseArea{
                     anchors.fill: parent
