@@ -78,10 +78,9 @@ Rectangle {
             columns: (isMobile)? 1 : 3
             Layout.fillWidth: true
             // anchors.horizontalCenter: parent.horizontalCenter
-            columnSpacing: 92 * scaleRatio
+            columnSpacing: 0 * scaleRatio
 
             ColumnLayout {
-                id: xx35
                 spacing: 0
 
                 Layout.fillWidth: true
@@ -107,6 +106,116 @@ Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     text: "Create a new wallet"
+                    font.pixelSize: 15 * scaleRatio
+                    color: "white"
+                }
+
+                Text {
+                    Layout.topMargin: 8 * scaleRatio
+                    Layout.fillWidth: true
+
+                    text: ""
+                    font.pixelSize: 14 * scaleRatio
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "red"
+                }
+
+                MouseArea{
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        console.log('x1');
+                        wizardStateView.state = "wizardTest";
+                    }
+                }
+            }
+
+            ColumnLayout {
+                spacing: 0
+
+                Layout.fillWidth: true
+                Layout.minimumWidth: 72 * scaleRatio
+                Layout.maximumWidth: 150 * scaleRatio
+                Layout.preferredHeight: height
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "red"
+                }
+
+                Image {
+                    Layout.preferredWidth: 50
+                    Layout.preferredHeight: 50
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    source: "../img/wizardWallet.png"
+                }
+
+                Text {
+                    Layout.topMargin: 20
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    text: "Create a new wallet"
+                    font.pixelSize: 15 * scaleRatio
+                    color: "white"
+                }
+
+                Text {
+                    Layout.topMargin: 8 * scaleRatio
+                    Layout.fillWidth: true
+
+                    text: ""
+                    font.pixelSize: 14 * scaleRatio
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "red"
+                }
+
+                MouseArea{
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        console.log('x1');
+                        wizardStateView.state = "wizardTest";
+                    }
+                }
+            }
+
+            ColumnLayout {
+                spacing: 0
+
+                Layout.fillWidth: true
+                Layout.minimumWidth: 72 * scaleRatio
+                Layout.maximumWidth: 150 * scaleRatio
+                Layout.preferredHeight: height
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "red"
+                }
+
+                Image {
+                    Layout.preferredWidth: 50
+                    Layout.preferredHeight: 50
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    source: "../img/wizardWallet.png"
+                }
+
+                Text {
+                    Layout.topMargin: 20
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    text: "jemoeder"
                     font.pixelSize: 15 * scaleRatio
                     color: "white"
                 }
