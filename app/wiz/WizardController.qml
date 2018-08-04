@@ -13,6 +13,15 @@ import "../wiz"
 Item {
     id: wizardController
     anchors.fill: parent
+    property int layoutScale: {
+        if(isMobile){
+            return 0;
+        } else if(appWindow.width < 800){
+            return 1;
+        } else {
+            return 2;
+        }
+    }
 
     Image {
         opacity: 1.0
@@ -36,7 +45,7 @@ Item {
         // Layout.preferredWidth: wizardController.width
         // Layout.preferredHeight: wizardController.height
         color: "transparent"
-        state: Settings.defaultState
+        state: Settings._defaultState
 
         onCurrentViewChanged: {
             if (previousView) {
@@ -69,7 +78,7 @@ Item {
 
         StackView {
             id: stackView
-            initialItem: wizardStateView.wizardLanguageView;
+            initialItem: wizardStateView.wizardHomeView;
             anchors.fill: parent
             clip: false
 

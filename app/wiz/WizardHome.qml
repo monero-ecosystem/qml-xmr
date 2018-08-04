@@ -1,20 +1,3 @@
-// states: [
-//     State {
-//         name: "hover"
-//         PropertyChanges { target: xx; width: 54 }
-//         PropertyChanges { target: xx; height: 54 }
-//     }, State {
-//         name: "exited"
-//         PropertyChanges { target: xx; width: 60 }
-//         PropertyChanges { target: xx; height: 60 }
-//     }
-// ]
-
-// NumberAnimation { id: anim; duration: 200; easing.type: Easing.OutCubic }
-// Behavior on width { animation: anim }
-// Behavior on height { animation: anim }
-
-
 import "../mock/Windows.js" as Windows
 import "../mock/NetworkType.js" as NetworkType
 import "../mock/Settings.js" as Settings
@@ -28,305 +11,549 @@ import QtQuick.Controls 2.0
 
 Rectangle {
     id: wizardHome
-    Layout.fillWidth: true
+    
     color: "transparent"
     property string fontColorDimmed: "#c0c0c0"
-    // Rectangle {
-    //     color: "#242424"
-    //     anchors.fill: parent
-    // }
-
-    // Image {
-    //     opacity: 1.0
-    //     anchors.fill: parent
-    //     source: "../images/middlePanelBg.jpg"
-    // }
-
-    // Rectangle {
-    //     Layout.topMargin: 0 * scaleRatio
-    //     Layout.bottomMargin: 0 * scaleRatio
-    //     Layout.preferredHeight: 5
-    //     Layout.fillWidth: true
-    //     color: MoneroComponents.Style.dividerColor
-    //     opacity: MoneroComponents.Style.dividerOpacity
-    // }
 
     ColumnLayout {
         id: root
 
         // anchors.verticalCenter: parent.verticalCenter
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.topMargin: 100
+        anchors.leftMargin: 80
+        anchors.rightMargin: 80
         anchors.horizontalCenter: parent.horizontalCenter
 
         spacing: 0 * scaleRatio
 
         Text {
             text: "Welcome to Monero!"
-            color: "white"
-            font.pixelSize: (isMobile)? 16 * scaleRatio : 36 * scaleRatio
             Layout.fillWidth: true
+            color: MoneroComponents.Style.defaultFontColor
+            font.pixelSize: {
+                if(wizardController.layoutScale === 2 ){
+                    return 36 * scaleRatio;
+                } else {
+                    return 22 * scaleRatio;
+                }
+            }
         }
 
         Text {
             text: "Please select one of the following options:"
-            color: wizardHome.fontColorDimmed
-            font.pixelSize: (isMobile)? 14 * scaleRatio : 16 * scaleRatio
+            color: MoneroComponents.Style.dimmedFontColor
+            // font.pixelSize: (isMobile)? 14 * scaleRatio : 16 * scaleRatio
             Layout.fillWidth: true
             Layout.topMargin: 8 * scaleRatio
+            font.pixelSize: {
+                if(wizardController.layoutScale === 2 ){
+                    return 16 * scaleRatio;
+                } else {
+                    return 14 * scaleRatio;
+                }
+            }
         }
 
         GridLayout {
-            columns: (isMobile)? 1 : 3
-            Layout.fillWidth: true
-            // anchors.horizontalCenter: parent.horizontalCenter
-            columnSpacing: 0 * scaleRatio
-
-            ColumnLayout {
-                spacing: 0
-
-                Layout.fillWidth: true
-                Layout.minimumWidth: 72 * scaleRatio
-                Layout.maximumWidth: 150 * scaleRatio
-                Layout.preferredHeight: height
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: "red"
+            id: gridHome
+            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.topMargin: {
+                if(wizardController.layoutScale === 2){
+                    return 50 * scaleRatio;
+                } else {
+                    return 20 * scaleRatio;
                 }
-
-                Image {
-                    Layout.preferredWidth: 50
-                    Layout.preferredHeight: 50
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    source: "../img/wizardWallet.png"
+            }
+            columnSpacing: {
+                if(wizardController.layoutScale === 2){
+                    return 28;
+                } else {
+                    return 10;
                 }
-
-                Text {
-                    Layout.topMargin: 20
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    text: "Create a new wallet"
-                    font.pixelSize: 15 * scaleRatio
-                    color: "white"
-                }
-
-                Text {
-                    Layout.topMargin: 8 * scaleRatio
-                    Layout.fillWidth: true
-
-                    text: ""
-                    font.pixelSize: 14 * scaleRatio
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: "red"
-                }
-
-                MouseArea{
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        console.log('x1');
-                        wizardStateView.state = "wizardTest";
-                    }
+            }
+            columns: {
+                if(wizardController.layoutScale === 2){
+                    return 4;
+                } else if(wizardController.layoutScale === 1){
+                    return 2;
+                } else {
+                    return 1;
                 }
             }
 
-            ColumnLayout {
-                spacing: 0
-
-                Layout.fillWidth: true
-                Layout.minimumWidth: 72 * scaleRatio
-                Layout.maximumWidth: 150 * scaleRatio
-                Layout.preferredHeight: height
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: "red"
-                }
-
-                Image {
-                    Layout.preferredWidth: 50
-                    Layout.preferredHeight: 50
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    source: "../img/wizardWallet.png"
-                }
-
-                Text {
-                    Layout.topMargin: 20
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    text: "Create a new wallet"
-                    font.pixelSize: 15 * scaleRatio
-                    color: "white"
-                }
-
-                Text {
-                    Layout.topMargin: 8 * scaleRatio
-                    Layout.fillWidth: true
-
-                    text: ""
-                    font.pixelSize: 14 * scaleRatio
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: "red"
-                }
-
-                MouseArea{
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        console.log('x1');
-                        wizardStateView.state = "wizardTest";
-                    }
+            property int buttonSize: {
+                if(wizardController.layoutScale === 2){
+                    return 128;
+                } else if(wizardController.layoutScale === 1){
+                    return 100;
+                } else {
+                    return 70;
                 }
             }
 
+            property int buttonImageSize: buttonSize - 10 * scaleRatio
+            property int maximumItemHeight: 170
+            property string itemBorderColor: "#FFFFFF"
+            property string itemBorderColorHover: "#FA6800"
+            property int itemAnimationIn: 200
+            property int itemAnimationOut: 400
+
             ColumnLayout {
                 spacing: 0
-
+                Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
                 Layout.minimumWidth: 72 * scaleRatio
-                Layout.maximumWidth: 150 * scaleRatio
-                Layout.preferredHeight: height
+                Layout.maximumWidth: 200 * scaleRatio
+                clip: true
 
                 Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: "red"
-                }
-
-                Image {
-                    Layout.preferredWidth: 50
-                    Layout.preferredHeight: 50
+                    id: createWallet
                     anchors.horizontalCenter: parent.horizontalCenter
-                    source: "../img/wizardWallet.png"
-                }
-
-                Text {
-                    Layout.topMargin: 20
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    text: "jemoeder"
-                    font.pixelSize: 15 * scaleRatio
-                    color: "white"
-                }
-
-                Text {
-                    Layout.topMargin: 8 * scaleRatio
-                    Layout.fillWidth: true
-
-                    text: ""
-                    font.pixelSize: 14 * scaleRatio
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: "red"
-                }
-
-                MouseArea{
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        console.log('x1');
-                        wizardStateView.state = "wizardTest";
-                    }
-                }
-            }
-
-            // ColumnLayout {
-            //     spacing: 0
-            //     Layout.fillWidth: true
-
-            //     Image {
-            //         anchors.horizontalCenter: parent.horizontalCenter
-            //         anchors.verticalCenter: parent.verticalCenter
-            //         Layout.preferredWidth: 50
-            //         Layout.preferredHeight: 50
+                    Layout.preferredHeight: gridHome.buttonSize
+                    Layout.preferredWidth: gridHome.buttonSize
+                    radius: gridHome.buttonSize
                     
-            //         source: "../img/local@3x.png"
-            //     }
+                    color: gridHome.itemBorderColor
+                    state: "EXITED"
+                    states: [
+                        State {
+                            name: "ENTERED"
+                            PropertyChanges { target: createWallet; color: gridHome.itemBorderColorHover}
+                        },
+                        State {
+                            name: "EXITED"
+                            PropertyChanges { target: createWallet; color: gridHome.itemBorderColor}
+                        }
+                    ]
 
-            //     Text {
-            //         Layout.topMargin: 70
-            //         anchors.horizontalCenter: parent.horizontalCenter
-            //         text: "Restore wallet"
-            //         font.pixelSize: 15 * scaleRatio
-            //         color: "white"
-            //     }
+                    transitions: [
+                        Transition {
+                            from: "ENTERED"
+                            to: "EXITED"
+                            ColorAnimation { target: createWallet; duration: gridHome.itemAnimationOut}
+                        },
+                        Transition {
+                            from: "EXITED"
+                            to: "ENTERED"
+                            ColorAnimation { target: createWallet; duration: gridHome.itemAnimationIn}
+                        }
+                    ]
 
-            //     Text {
-            //         Layout.topMargin: 8 * scaleRatio
-            //         anchors.horizontalCenter: parent.horizontalCenter
-            //         text: "From keys or mnemonic seed"
-            //         color: wizardHome.fontColorDimmed
-            //         font.pixelSize: 14 * scaleRatio
-            //     }
+                    Image {
+                        width: gridHome.buttonImageSize
+                        height: gridHome.buttonImageSize
+                        fillMode: Image.PreserveAspectFit
+                        horizontalAlignment: Image.AlignRight
+                        verticalAlignment: Image.AlignTop
+                        anchors.centerIn: parent
+                        source: "../img/createWallet.png"
+                    }
 
-            //     MouseArea{
-            //         anchors.fill: parent
-            //         hoverEnabled: true
-            //         cursorShape: Qt.PointingHandCursor
-            //         onClicked: {
-            //             console.log('x2');
-            //         }
-            //     }
-            // }
+                    MouseArea {
+                        id: createWalletArea
+                        onEntered: createWallet.state = "ENTERED"
+                        onExited: createWallet.state = "EXITED"                        
+                        cursorShape: Qt.PointingHandCursor
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: {
+                            page.createWalletClicked()
+                        }
+                    }
+                }
 
-            // ColumnLayout {
-            //     spacing: 0
-            //     Layout.fillWidth: true
+                TextArea {
+                    Layout.topMargin: 20
+                    Layout.fillWidth: true
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-            //     Item {
-            //         anchors.horizontalCenter: parent.horizontalCenter
-            //         anchors.verticalCenter: parent.verticalCenter
-            //         Layout.preferredWidth: 50
-            //         Layout.preferredHeight: 50
+                    color: MoneroComponents.Style.defaultFontColor
+                    text: "Create a new wallet"
 
-            //         Image {
-            //             id: xx35
-            //             width: 41
-            //             height: 50
-            //             source: "../img/remote@3x.png"
-            //         }
-            //     }
+                    font.pixelSize: 15 * scaleRatio
+                    horizontalAlignment: TextInput.AlignHCenter
+                    selectByMouse: false
+                    wrapMode: Text.WordWrap
+                    textMargin: 0
+                    leftPadding: 0
+                    topPadding: 0
+                    readOnly: true
 
-            //     Text {
-            //         Layout.topMargin: 70
-            //         text: "Open an existing wallet"
-            //         font.pixelSize: 15 * scaleRatio
-            //         color: "white"
-            //         anchors.horizontalCenter: parent.horizontalCenter
-            //     }
+                    // @TODO: Legacy. Remove after Qt 5.8.
+                    // https://stackoverflow.com/questions/41990013
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: false
+                    }
+                }
 
-            //     Text {
-            //         Layout.topMargin: 8 * scaleRatio
-            //         text: "From a local wallet file"
-            //         color: wizardHome.fontColorDimmed
-            //         font.pixelSize: 14 * scaleRatio
-            //         anchors.horizontalCenter: parent.horizontalCenter
-            //     }
+                TextArea {
+                    Layout.fillWidth: true
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-            //     MouseArea {
-            //         anchors.fill: parent
-            //         hoverEnabled: true
-            //         cursorShape: Qt.PointingHandCursor
-            //         onClicked: {
-            //             console.log('x3');
-            //         }
-            //     }
-            // }
+                    color: MoneroComponents.Style.dimmedFontColor
+                    text: "Generate a wallet file"
+
+                    font.pixelSize: 14 * scaleRatio
+                    horizontalAlignment: TextInput.AlignHCenter
+                    selectByMouse: false
+                    wrapMode: Text.WordWrap
+                    textMargin: 0
+                    leftPadding: 0
+                    topPadding: 0
+                    readOnly: true
+
+                    // @TODO: Legacy. Remove after Qt 5.8.
+                    // https://stackoverflow.com/questions/41990013
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: false
+                    }
+                }
+            }
+
+            ColumnLayout {
+                spacing: 0
+                Layout.alignment: Qt.AlignTop
+                Layout.fillWidth: true
+                Layout.minimumWidth: 72 * scaleRatio
+                Layout.maximumWidth: 200 * scaleRatio
+                clip: true
+
+                Rectangle {
+                    id: createHardware
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    Layout.preferredHeight: gridHome.buttonSize
+                    Layout.preferredWidth: gridHome.buttonSize
+                    radius: gridHome.buttonSize
+
+                    color: gridHome.itemBorderColor
+                    state: "EXITED"
+                    states: [
+                        State {
+                            name: "ENTERED"
+                            PropertyChanges { target: createHardware; color: gridHome.itemBorderColorHover}
+                        },
+                        State {
+                            name: "EXITED"
+                            PropertyChanges { target: createHardware; color: gridHome.itemBorderColor}
+                        }
+                    ]
+
+                    transitions: [
+                        Transition {
+                            from: "ENTERED"
+                            to: "EXITED"
+                            ColorAnimation { target: createHardware; duration: gridHome.itemAnimationOut}
+                        },
+                        Transition {
+                            from: "EXITED"
+                            to: "ENTERED"
+                            ColorAnimation { target: createHardware; duration: gridHome.itemAnimationIn}
+                        }
+                    ]
+
+                    Image {
+                        width: gridHome.buttonImageSize
+                        height: gridHome.buttonImageSize
+                        fillMode: Image.PreserveAspectFit
+                        horizontalAlignment: Image.AlignRight
+                        verticalAlignment: Image.AlignTop
+                        anchors.centerIn: parent
+                        source: "../img/createWalletFromDevice.png"
+                    }
+
+                    MouseArea {
+                        id: createHardwareArea
+                        onEntered: createHardware.state = "ENTERED"
+                        onExited: createHardware.state = "EXITED" 
+                        cursorShape: Qt.PointingHandCursor
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: {
+                            page.createWalletClicked()
+                        }
+                    }
+                }
+
+                TextArea {
+                    Layout.topMargin: 20
+                    Layout.fillWidth: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    color: MoneroComponents.Style.defaultFontColor
+                    text: "Create a new wallet"
+
+                    font.pixelSize: 15 * scaleRatio
+                    horizontalAlignment: TextInput.AlignHCenter
+                    selectByMouse: false
+                    wrapMode: Text.WordWrap
+                    textMargin: 0
+                    leftPadding: 0
+                    topPadding: 0
+                    readOnly: true
+
+                    // @TODO: Legacy. Remove after Qt 5.8.
+                    // https://stackoverflow.com/questions/41990013
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: false
+                    }
+                }
+
+                TextArea {
+                    Layout.fillWidth: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    color: MoneroComponents.Style.dimmedFontColor
+                    text: "From a hardware device"
+
+                    font.pixelSize: 14 * scaleRatio
+                    horizontalAlignment: TextInput.AlignHCenter
+                    selectByMouse: false
+                    wrapMode: Text.WordWrap
+                    textMargin: 0
+                    leftPadding: 0
+                    topPadding: 0
+                    readOnly: true
+
+                    // @TODO: Legacy. Remove after Qt 5.8.
+                    // https://stackoverflow.com/questions/41990013
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: false
+                    }
+                }
+            }
+
+            ColumnLayout {
+                spacing: 0
+                Layout.alignment: Qt.AlignTop
+                Layout.fillWidth: true
+                Layout.minimumWidth: 72 * scaleRatio
+                Layout.maximumWidth: 200 * scaleRatio
+                clip: true
+
+                Rectangle {
+                    id: openAccount
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    Layout.preferredHeight: gridHome.buttonSize
+                    Layout.preferredWidth: gridHome.buttonSize
+                    radius: gridHome.buttonSize
+                    color: gridHome.itemBorderColor
+                    state: "EXITED"
+                    states: [
+                        State {
+                            name: "ENTERED"
+                            PropertyChanges { target: openAccount; color: gridHome.itemBorderColorHover}
+                        },
+                        State {
+                            name: "EXITED"
+                            PropertyChanges { target: openAccount; color: gridHome.itemBorderColor}
+                        }
+                    ]
+
+                    transitions: [
+                        Transition {
+                            from: "ENTERED"
+                            to: "EXITED"
+                            ColorAnimation { target: openAccount; duration: gridHome.itemAnimationOut}
+                        },
+                        Transition {
+                            from: "EXITED"
+                            to: "ENTERED"
+                            ColorAnimation { target: openAccount; duration: gridHome.itemAnimationIn}
+                        }
+                    ]
+
+                    Image {
+                        width: gridHome.buttonImageSize
+                        height: gridHome.buttonImageSize
+                        fillMode: Image.PreserveAspectFit
+                        horizontalAlignment: Image.AlignRight
+                        verticalAlignment: Image.AlignTop
+                        anchors.centerIn: parent
+                        source: "../img/openAccount.png"
+                    }
+
+                    MouseArea {
+                        id: openAccountArea
+                        onEntered: openAccount.state = "ENTERED"
+                        onExited: openAccount.state = "EXITED" 
+                        cursorShape: Qt.PointingHandCursor
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: {
+                            page.createWalletClicked()
+                        }
+                    }
+                }
+
+                TextArea {
+                    Layout.topMargin: 20
+                    Layout.fillWidth: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    color: MoneroComponents.Style.defaultFontColor
+                    text: "Open a wallet from file"
+
+                    font.pixelSize: 15 * scaleRatio
+                    horizontalAlignment: TextInput.AlignHCenter
+                    selectByMouse: false
+                    wrapMode: Text.WordWrap
+                    textMargin: 0
+                    leftPadding: 0
+                    topPadding: 0
+                    readOnly: true
+
+                    // @TODO: Legacy. Remove after Qt 5.8.
+                    // https://stackoverflow.com/questions/41990013
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: false
+                    }
+                }
+
+                TextArea {
+                    Layout.fillWidth: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    color: MoneroComponents.Style.dimmedFontColor
+                    text: "From a local wallet file"
+
+                    font.pixelSize: 14 * scaleRatio
+                    horizontalAlignment: TextInput.AlignHCenter
+                    selectByMouse: false
+                    wrapMode: Text.WordWrap
+                    textMargin: 0
+                    leftPadding: 0
+                    topPadding: 0
+                    readOnly: true
+
+                    // @TODO: Legacy. Remove after Qt 5.8.
+                    // https://stackoverflow.com/questions/41990013
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: false
+                    }
+                }
+            }
+
+            ColumnLayout {
+                spacing: 0
+                Layout.alignment: Qt.AlignTop
+                Layout.fillWidth: true
+                Layout.minimumWidth: 72 * scaleRatio
+                Layout.maximumWidth: 200 * scaleRatio
+                clip: true
+
+                Rectangle {
+                    id: recoverWallet
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    Layout.preferredHeight: gridHome.buttonSize
+                    Layout.preferredWidth: gridHome.buttonSize
+                    radius: gridHome.buttonSize
+                    color: gridHome.itemBorderColor
+                    state: "EXITED"
+                    states: [
+                        State {
+                            name: "ENTERED"
+                            PropertyChanges { target: recoverWallet; color: gridHome.itemBorderColorHover}
+                        },
+                        State {
+                            name: "EXITED"
+                            PropertyChanges { target: recoverWallet; color: gridHome.itemBorderColor}
+                        }
+                    ]
+
+                    transitions: [
+                        Transition {
+                            from: "ENTERED"
+                            to: "EXITED"
+                            ColorAnimation { target: recoverWallet; duration: gridHome.itemAnimationOut}
+                        },
+                        Transition {
+                            from: "EXITED"
+                            to: "ENTERED"
+                            ColorAnimation { target: recoverWallet; duration: gridHome.itemAnimationIn}
+                        }
+                    ]
+
+                    Image {
+                        width: gridHome.buttonImageSize
+                        height: gridHome.buttonImageSize
+                        fillMode: Image.PreserveAspectFit
+                        horizontalAlignment: Image.AlignRight
+                        verticalAlignment: Image.AlignTop
+                        anchors.centerIn: parent
+                        source: "../img/recoverWallet.png"
+                    }
+
+                    MouseArea {
+                        id: recoverWalletArea
+                        onEntered: recoverWallet.state = "ENTERED"
+                        onExited: recoverWallet.state = "EXITED" 
+                        cursorShape: Qt.PointingHandCursor
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: {
+                            page.createWalletClicked()
+                        }
+                    }
+                }
+
+                TextArea {
+                    Layout.topMargin: 20
+                    Layout.fillWidth: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    color: MoneroComponents.Style.defaultFontColor
+                    text: "Restore wallet"
+
+                    font.pixelSize: 15 * scaleRatio
+                    horizontalAlignment: TextInput.AlignHCenter
+                    selectByMouse: false
+                    wrapMode: Text.WordWrap
+                    textMargin: 0
+                    leftPadding: 0
+                    topPadding: 0
+                    readOnly: true
+
+                    // @TODO: Legacy. Remove after Qt 5.8.
+                    // https://stackoverflow.com/questions/41990013
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: false
+                    }
+                }
+
+                TextArea {
+                    Layout.fillWidth: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    color: MoneroComponents.Style.dimmedFontColor
+                    text: "From keys or mnemonic seed"
+
+                    font.pixelSize: 14 * scaleRatio
+                    horizontalAlignment: TextInput.AlignHCenter
+                    selectByMouse: false
+                    wrapMode: Text.WordWrap
+                    textMargin: 0
+                    leftPadding: 0
+                    topPadding: 0
+                    readOnly: true
+
+                    // @TODO: Legacy. Remove after Qt 5.8.
+                    // https://stackoverflow.com/questions/41990013
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: false
+                    }
+                }
+            }
         }
 
         Rectangle {
