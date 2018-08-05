@@ -27,32 +27,37 @@ Rectangle {
         anchors.rightMargin: 80
         anchors.horizontalCenter: parent.horizontalCenter
 
-        spacing: 0 * scaleRatio
+        spacing: 20 * scaleRatio
 
-        Text {
-            text: "Welcome to Monero!"
+        ColumnLayout {
             Layout.fillWidth: true
-            color: MoneroComponents.Style.defaultFontColor
-            font.pixelSize: {
-                if(wizardController.layoutScale === 2 ){
-                    return 36 * scaleRatio;
-                } else {
-                    return 22 * scaleRatio;
+            spacing: 0
+
+            Text {
+                text: "Welcome to Monero!"
+                Layout.fillWidth: true
+                color: MoneroComponents.Style.defaultFontColor
+                font.pixelSize: {
+                    if(wizardController.layoutScale === 2 ){
+                        return 36 * scaleRatio;
+                    } else {
+                        return 22 * scaleRatio;
+                    }
                 }
             }
-        }
 
-        Text {
-            text: "Please select one of the following options:"
-            color: MoneroComponents.Style.dimmedFontColor
-            // font.pixelSize: (isMobile)? 14 * scaleRatio : 16 * scaleRatio
-            Layout.fillWidth: true
-            Layout.topMargin: 8 * scaleRatio
-            font.pixelSize: {
-                if(wizardController.layoutScale === 2 ){
-                    return 16 * scaleRatio;
-                } else {
-                    return 14 * scaleRatio;
+            Text {
+                text: "Please select one of the following options:"
+                color: MoneroComponents.Style.dimmedFontColor
+                // font.pixelSize: (isMobile)? 14 * scaleRatio : 16 * scaleRatio
+                Layout.fillWidth: true
+                Layout.topMargin: 8 * scaleRatio
+                font.pixelSize: {
+                    if(wizardController.layoutScale === 2 ){
+                        return 16 * scaleRatio;
+                    } else {
+                        return 14 * scaleRatio;
+                    }
                 }
             }
         }
@@ -62,9 +67,9 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             Layout.topMargin: {
                 if(wizardController.layoutScale === 2){
-                    return 50 * scaleRatio;
+                    return 40 * scaleRatio;
                 } else {
-                    return 20 * scaleRatio;
+                    return 0 * scaleRatio;
                 }
             }
             columnSpacing: {
@@ -557,39 +562,41 @@ Rectangle {
         }
 
         Rectangle {
-            Layout.topMargin: 30 * scaleRatio
-            Layout.bottomMargin: 30 * scaleRatio
+            Layout.topMargin: 20 * scaleRatio
+            Layout.bottomMargin: 0 * scaleRatio
             Layout.preferredHeight: 1
             Layout.fillWidth: true
             color: MoneroComponents.Style.dividerColor
             opacity: MoneroComponents.Style.dividerOpacity
         }
 
-        MoneroComponents.StandardButton {
-            text: "pick language"
-            small: true
-            onClicked: {
-                wizardStateView.state = "wizardLanguage"
+        RowLayout {
+            StandardButton {
+                id: sendButton
+                rightIcon: "../images/rightArrow.png"
+                rightIconInactive: "../images/rightArrow.png"
+                rightIconMirror: true
+                rightIconMargin: 40
+                small: true
+                Layout.topMargin: 4 * scaleRatio
+                text: qsTr("Language selection") + translationManager.emptyString
+                onClicked: {
+                    wizardStateView.state = "wizardLanguage"
+                }
             }
         }
 
-        MoneroComponents.StandardButton {
-            text: "height"
-            small: true
-            onClicked: {
-                console.log(xx35.height);
+        RowLayout {
+            MoneroComponents.CheckBox2 {
+                id: showAdvancedCheckbox
+                Layout.fillWidth: true
+                fontSize: 15 * scaleRatio
+                checked: false
+                onClicked: {
+                    console.log('Advanced options')
+                }
+                text: qsTr("Advanced options") + translationManager.emptyString
             }
-        }
-
-        MoneroComponents.CheckBox2 {
-            id: showAdvancedCheckbox
-            Layout.fillWidth: true
-            fontSize: 15 * scaleRatio
-            checked: false
-            onClicked: {
-                console.log('Advanced options')
-            }
-            text: qsTr("Advanced options") + translationManager.emptyString
         }
 
         RowLayout {
@@ -601,7 +608,6 @@ Rectangle {
                 Layout.alignment: Qt.AlignCenter
                 Layout.fillWidth: true
                 spacing: 38 * scaleRatio
-
 
                 Rectangle {
                     width: 100 * scaleRatio
