@@ -19,4 +19,4 @@ function createComponent(fn) {
     return component.createObject({});
 }
 
-var defaultState = "wizardLanguage"
+var defaultState = "wizardTest"

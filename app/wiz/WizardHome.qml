@@ -165,7 +165,7 @@ Rectangle {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            page.createWalletClicked()
+                            wizardStateView.state = "wizardTest"
                         }
                     }
                 }
@@ -279,7 +279,7 @@ Rectangle {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            page.createWalletClicked()
+                            wizardStateView.state = "wizardTest"
                         }
                     }
                 }
@@ -392,7 +392,7 @@ Rectangle {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            page.createWalletClicked()
+                            wizardStateView.state = "wizardTest"
                         }
                     }
                 }
@@ -505,7 +505,7 @@ Rectangle {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            page.createWalletClicked()
+                            wizardStateView.state = "wizardTest"
                         }
                     }
                 }
@@ -573,10 +573,10 @@ Rectangle {
         RowLayout {
             StandardButton {
                 id: sendButton
-                rightIcon: "../images/rightArrow.png"
-                rightIconInactive: "../images/rightArrow.png"
-                rightIconMirror: true
-                rightIconMargin: 40
+                // rightIcon: "../images/rightArrow.png"
+                // rightIconInactive: "../images/rightArrow.png"
+                // rightIconMirror: true
+                // rightIconMargin: 40
                 small: true
                 Layout.topMargin: 4 * scaleRatio
                 text: qsTr("Language selection") + translationManager.emptyString

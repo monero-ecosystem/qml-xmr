@@ -78,7 +78,7 @@ Item {
 
         StackView {
             id: stackView
-            initialItem: wizardStateView.wizardHomeView;
+            initialItem: wizardStateView.wizardTestView;
             anchors.fill: parent
             clip: false
 
