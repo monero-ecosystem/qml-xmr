@@ -11,6 +11,8 @@ Rectangle {
     Layout.fillWidth: true
     color: "black"
 
+    property string viewName: "wizardLanguage"
+
     Image {
         opacity: sideBar.position == 0 ? 1.0 : 0.2
         anchors.fill: parent
@@ -300,7 +302,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: true
             font.pixelSize: 12 * scaleRatio
-            color: MoneroComponents.Style.greyFontColor
+            color: MoneroComponents.Style.defaultFontColor
             text: "v0.12.3.0"
 
             Behavior on opacity {

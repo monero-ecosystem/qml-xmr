@@ -38,22 +38,30 @@ Item {
         property WizardTest wizardTestView: WizardTest { }
         anchors.fill: parent
 
-        Component.onCompleted: {
-
-        }
+        signal previousClicked;
 
         // Layout.preferredWidth: wizardController.width
         // Layout.preferredHeight: wizardController.height
         color: "transparent"
         state: Settings._defaultState
 
+        onPreviousClicked: {
+            if (previousView && previousView.viewName != null){
+                console.log('dynamic');
+                state = previousView.viewName;
+            } else {
+                state = "wizardHome";
+            }
+        }
+
         onCurrentViewChanged: {
             if (previousView) {
-//                if (typeof previousView.onPageClosed === "function") {
-//                    previousView.onPageClosed();
-//                }
+               if (typeof previousView.onPageClosed === "function") {
+                   previousView.onPageClosed();
+               }
             }
-            previousView = currentView
+            console.log('set');
+            previousView = currentView;
             if (currentView) {
                 stackView.replace(currentView)
                 // Component.onCompleted is called before wallet is initilized
@@ -103,6 +111,8 @@ Item {
                 }
             }
         }
-	    
+        Component.onCompleted: {
+
+        }
 	}
 }

@@ -11,8 +11,9 @@ import QtQuick.Controls 2.0
 
 Rectangle {
     id: wizardHome
-    
     color: "transparent"
+
+    property string viewName: "wizardHome"
     property string fontColorDimmed: "#c0c0c0"
 
     ColumnLayout {

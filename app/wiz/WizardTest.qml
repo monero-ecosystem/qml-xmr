@@ -13,6 +13,7 @@ Rectangle {
     id: wizardHome
     
     color: "transparent"
+    property string viewName: "wizardTest"
     property string fontColorDimmed: "#c0c0c0"
 
     ColumnLayout {
@@ -26,8 +27,7 @@ Rectangle {
         anchors.leftMargin: 140
         anchors.rightMargin: 140
 
-
-        spacing: 20 * scaleRatio
+        spacing: 40 * scaleRatio
 
         ColumnLayout {
             Layout.fillWidth: true
@@ -46,18 +46,6 @@ Rectangle {
                         return 22 * scaleRatio;
                     }
                 }
-            }
-
-            MoneroComponents.LineEditMulti {
-                id: walletName2
-                Layout.maximumWidth: 660
-                spacing: 0
-                wrapMode: Text.WrapAnywhere
-                addressValidation: false
-                labelText: "Wallet name"
-                labelFontSize: 14 * scaleRatio
-                placeholderText: "Enter a name"
-                text: ""
             }
 
             MoneroComponents.LineEditMulti {
@@ -95,14 +83,45 @@ Rectangle {
                     // Layout.maximumWidth: parent.width / 1.2
                     text: "This seed is <b style=\"text-decoration: underline;\">very</b> important to write down and keep secret. It is all you need to backup and restore your wallet."
                 }
+            }
 
-                MoneroComponents.StandardButton{
-                    text: "lol"
-                    onClicked: {
-                        console.log(walletName.activeFocus);
-                    }
+            MoneroComponents.LineEditMulti {
+                id: blockchainLocation
+                Layout.maximumWidth: 660
+                spacing: 0
+                wrapMode: Text.WrapAnywhere
+                addressValidation: false
+                labelText: "Wallet location"
+                labelFontSize: 14 * scaleRatio
+                placeholderText: "..."
+                text: ""
+            }
+        }
+
+        GridLayout {
+            id: x
+            anchors.left: parent.left
+            anchors.right: parent.right
+            columns: 2
+            columnSpacing: width - 300
+            
+            MoneroComponents.StandardButton{
+                Layout.fillWidth: true
+                text: "Previous"
+                onClicked: {
+                    wizardStateView.previousClicked();
+                    // wizardStateView.state = wizardStateView.previousView.viewName
                 }
             }
+
+            MoneroComponents.StandardButton{
+                Layout.fillWidth: true
+                text: "Next"
+                onClicked: {
+                    console.log(walletName.activeFocus);
+                }
+            }
+
         }
     }
 }
