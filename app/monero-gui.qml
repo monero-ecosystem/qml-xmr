@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
@@ -19,10 +19,6 @@ ApplicationWindow {
     title: "Monero"
     width: 940
     height: 800
-
-    SetInterval {
-        id: lol
-    }
 
     // mocks
     property var watcher
@@ -62,14 +58,15 @@ ApplicationWindow {
     property bool isMobile: false
     property var walletLogPath: "/home/dsc/.config/Monero/monero-core.conf"
     // property var qtRuntimeVersion: qt_version_str
-    property var qtRuntimeversion: "eoeo"
+    property var qtRuntimeversion: "5.7.1"
     property var persistentSettings: {
         "customDecorations": true,
         'useRemoteNode': true,
         "daemonFlags": "--log testflag",
         "logLevel": 2,
         "language": "English (US)",
-        "locale": "en_US"
+        "locale": "en_US",
+        "remoteNodeAddress": "node.xmr.ru:13666"
     }
 
     property var daemonManager: {

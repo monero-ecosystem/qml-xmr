@@ -303,7 +303,7 @@ Rectangle {
             font.bold: true
             font.pixelSize: 12 * scaleRatio
             color: MoneroComponents.Style.defaultFontColor
-            text: "v0.12.3.0"
+            text: "v0.13.1"
 
             Behavior on opacity {
                 NumberAnimation {

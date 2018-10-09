@@ -8,6 +8,8 @@ import QtQuick 2.7
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0
 
+// @TODO: remove 'jemoeder'
+
 
 Rectangle {
     id: wizardHome
@@ -166,7 +168,7 @@ Rectangle {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            wizardStateView.state = "wizardTest"
+                            wizardStateView.state = "wizardCreateWallet1"
                         }
                     }
                 }

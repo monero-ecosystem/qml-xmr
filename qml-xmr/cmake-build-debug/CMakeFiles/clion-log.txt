@@ -1,4 +1,0 @@
-/home/dsc/Downloads/clion-2018.1.2/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/dsc/ClionProjects/qml-xmr/qml-xmr
--- Configuring done
--- Generating done
--- Build files have been written to: /home/dsc/ClionProjects/qml-xmr/qml-xmr

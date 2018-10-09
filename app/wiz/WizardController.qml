@@ -13,6 +13,30 @@ import "../wiz"
 Item {
     id: wizardController
     anchors.fill: parent
+
+    function resetOptions(){
+        walletOptionsName = '';
+        walletOptionsLocation = '/home/dsc/Monero/wallets';
+        walletOptionsPassword = '';
+        walletOptionslanguage = '';
+        walletOptionsSeed = '';
+        walletOptionsBackup = '';
+    }
+
+    property string walletOptionsName: 'testwallet'
+    property string walletOptionsLocation: '/home/dsc/Monero/wallets'
+    property string walletOptionsPassword: 'test123'
+    property string walletOptionsLanguage: persistentSettings.language
+    property string walletOptionsSeed: ''
+    property string walletOptionsBackup: ''
+    property string walletOptionsBootstrapAddress: persistentSettings.bootstrapNodeAddress
+    property string daemonOptionsAddress: persistentSettings.remoteNodeAddress
+    property string daemonOptionsNetType: {
+        if(currentWallet.nettype === 1){
+            return 'Mainnet';
+        }
+    }
+
     property int layoutScale: {
         if(isMobile){
             return 0;
@@ -35,7 +59,10 @@ Item {
         property Item previousView
         property WizardLanguage wizardLanguageView: WizardLanguage { }
         property WizardHome wizardHomeView: WizardHome { }
-        property WizardTest wizardTestView: WizardTest { }
+        property WizardCreateWallet1 wizardCreateWallet1View: WizardCreateWallet1 { }
+        property WizardCreateWallet2 wizardCreateWallet2View: WizardCreateWallet2 { }
+        property WizardCreateWallet3 wizardCreateWallet3View: WizardCreateWallet3 { }
+        property WizardCreateWallet4 wizardCreateWallet4View: WizardCreateWallet4 { }
         anchors.fill: parent
 
         signal previousClicked;
@@ -43,11 +70,10 @@ Item {
         // Layout.preferredWidth: wizardController.width
         // Layout.preferredHeight: wizardController.height
         color: "transparent"
-        state: Settings._defaultState
+        state: ''
 
         onPreviousClicked: {
             if (previousView && previousView.viewName != null){
-                console.log('dynamic');
                 state = previousView.viewName;
             } else {
                 state = "wizardHome";
@@ -60,7 +86,7 @@ Item {
                    previousView.onPageClosed();
                }
             }
-            console.log('set');
+
             previousView = currentView;
             if (currentView) {
                 stackView.replace(currentView)
@@ -79,14 +105,23 @@ Item {
                 name: "wizardHome"
                 PropertyChanges { target: wizardStateView; currentView: wizardStateView.wizardHomeView }
             }, State {
-                name: "wizardTest"
-                PropertyChanges { target: wizardStateView; currentView: wizardStateView.wizardTestView }
+                name: "wizardCreateWallet1"
+                PropertyChanges { target: wizardStateView; currentView: wizardStateView.wizardCreateWallet1View }
+            }, State {
+                name: "wizardCreateWallet2"
+                PropertyChanges { target: wizardStateView; currentView: wizardStateView.wizardCreateWallet2View }
+            }, State {
+                name: "wizardCreateWallet3"
+                PropertyChanges { target: wizardStateView; currentView: wizardStateView.wizardCreateWallet3View }
+            }, State {
+                name: "wizardCreateWallet4"
+                PropertyChanges { target: wizardStateView; currentView: wizardStateView.wizardCreateWallet4View }
             }
         ]
 
         StackView {
             id: stackView
-            initialItem: wizardStateView.wizardTestView;
+            initialItem: wizardStateView.wizardCreateWallet4View;
             anchors.fill: parent
             clip: false
 
