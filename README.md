@@ -1,45 +1,58 @@
 qml-xmr
 ==============
 
-Development environment for QML/JS with a mock Qt application that resembles the Monero GUI.
+### What is this?
 
-![](https://i.imgur.com/YnbWvwI.png)
+A lightweight QML scene you can easily reload. Solves the problem of having to wait on monero-gui compiles to see your latest QML/JS changes. Components from the monero-gui repository are available to you via a submodule. Best used as a component prototyping tool.
 
-Solves the problem of having to wait on monero-gui compiles to see your latest QML/JS changes.
+### What is it not?
+
+This is not a replacement of the Monero GUI. As previously mentioned, it was meant to make individual screens or components.
+
+### Project layout
 
 Included in this repository are:
 
-- `qml-xmr` - Fork of [qml-livereload](https://github.com/penk/qml-livereload). Injects monero-gui related context.
-- An example Qt application that uses Monero components.
-
-The recommended way is to use the Sublime Text 3 to edit `app/Mock.qml`, then compile it via a custom Sublime build system.
+- The folder `qml-xmr` contains a simple Qt/QML program that you should put into `/usr/local/bin/` after compiling
+- The folder `app` contains an example Qt application that uses a Monero component.
 
 ### Requirements:
 
 - Sublime Text 3 or any other IDE
-- Qt 5.7
+- Qt 5.9 or higher
 - CMake >= 3.10
 
 ```
 qmake --version
 QMake version 3.0
-Using Qt version 5.7.1 in /home/dsc/Qt/5.7/gcc_64/lib
+Using Qt version 5.9.7 in /home/dsc/Qt5.9/5.9.7/gcc_64/lib
 ```
 
 Make sure to correctly set your environment. Consult `qtchooser -print-env`
 
 ### Installation
 
+Either use cmake or qmake to compile the program.
 
-First compile `qml-xmr`:
+#### cmake
 
 ```
 cd qml-xmr
-cmake . && make && sudo make install
+cmake .
+make
+sudo make install
 ```
 
-Or if you prefer `qmake`:
+If cmake cannot find your Qt installation, or it finds the wrong version use (replace path):
 
+```sh
+cd qml-xmr
+cmake . -DCMAKE_PREFIX_PATH=/home/dsc/Qt5.9/5.9.7/gcc_64
+make
+sudo make install
+```
+
+#### qmake
 
 ```
 cd qml-xmr
@@ -56,9 +69,14 @@ git submodule init
 git submodule update
 ```
 
-Launch Sublime Text 3 and make a new build system:
+## How to use
 
-1. Open the file `app/Mock.qml`
+The recommended way is to use the Sublime Text 3 to edit `app/Mock.qml`. Launch Sublime Text 3 and make a new build system:
+
+1. Open Sublime Text 3
+2. File->Open Folder
+3. Select the `app/` folder
+4. In the sidebar open `Mock.qml`
 2. Go to `Tools->Build System->New Build System`
 3. Paste the following:
 
@@ -75,5 +93,5 @@ Modify `Mock.qml` as you please. Press `CTRL-B` to run the application.
 
 ### Tips
 
-- `monero-gui.qml` is the entry point of the application, you shouldn't need to edit it. It includes `Mock.qml` automatically.
+- `app/monero-gui.qml` is the entry point of the application, you shouldn't need to edit it. It includes `Mock.qml` automatically.
 - Update the submodule `monero-gui` regularly
