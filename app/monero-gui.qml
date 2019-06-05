@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
+import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
@@ -12,6 +13,7 @@ import "mock/Version.js" as Version
 import "mock/NetworkType.js" as NetworkType
 import "mock/Settings.js" as Settings
 import "mock"
+import "wizard"
 
 ApplicationWindow {
     id: appWindow
@@ -29,6 +31,7 @@ ApplicationWindow {
     property var transaction;
     property var transactionDescription;
     property var walletPassword
+    property int walletMode: 2
     property var oshelper: {
         "temporaryFilename": function(){
             return '/tmp/mocked_wallet'
@@ -47,6 +50,8 @@ ApplicationWindow {
     property var toolTip
     property string walletName: "dsc"
     property bool viewOnly: false
+    property var visibility: 0
+    property bool isOpenGL: true
     property bool foundNewBlock: false
     property int timeToUnlock: 0
     property bool qrScannerEnabled: true
@@ -63,6 +68,7 @@ ApplicationWindow {
     property int estimatedBlockchainSize: 50 // GB
     property double scaleRatio: 1.0
     property bool isMobile: false
+    property bool themeTransition: true
     property var walletLogPath: "/home/dsc/.config/Monero/monero-core.conf"
     // property var qtRuntimeVersion: qt_version_str
     property var qtRuntimeversion: "5.7.1"
@@ -76,7 +82,8 @@ ApplicationWindow {
         "remoteNodeAddress": "",
         "bootstrapNodeAddress": "",
         "blockchainDataDir": "",
-        "nettype": NetworkType.STAGENET
+        "nettype": NetworkType.STAGENET,
+        "transferShowAdvanced": true
     }
 
     property var daemonManager: {
@@ -122,6 +129,22 @@ ApplicationWindow {
             return {
                 'seed': "joining hull estate tanks cube vain lamb jerseys kettle usual nerves wobbly opacity faulty succeed meeting stellar threaten gasp dialect ridges deity hairy injury threaten"
             }
+        },
+        "walletCreated": {
+            "disconnect": function(l){},
+            "connect": function(l){}
+        },
+        "walletPassphraseNeeded": {
+            "disconnect": function(l){},
+            "connect": function(l){}
+        },
+        "deviceButtonRequest": {
+            "disconnect": function(l){},
+            "connect": function(l){}
+        },
+        "deviceButtonPressed": {
+            "disconnect": function(l){},
+            "connect": function(l){}
         }
     }
     property var translationManager: {
@@ -136,9 +159,11 @@ ApplicationWindow {
     color: "black"
     // flags: persistentSettings.customDecorations ? Windows.flagsCustomDecorations : Windows.flags
     flags: Windows.flagsCustomDecorations
-    
+
     // mock.qml
-    Mock{}
+    WizardController{
+        anchors.fill: parent
+    }
 
     MouseArea {
         id: resizeArea
@@ -183,31 +208,16 @@ ApplicationWindow {
         }
     }
 
-    TitleBar {
+    MoneroComponents.TitleBar{
         id: titleBar
-        x: 0
-        y: 0
         anchors.left: parent.left
         anchors.right: parent.right
-        showMinimizeButton: true
-        showMaximizeButton: true
-        showWhatIsButton: false
-        showMoneroLogo: true
         onCloseClicked: appWindow.close();
         onMaximizeClicked: {
             appWindow.visibility = appWindow.visibility !== Window.FullScreen ? Window.FullScreen :
                                                                                 Window.Windowed
         }
         onMinimizeClicked: appWindow.visibility = Window.Minimized
-        onGoToBasicVersion: {
-            if (yes) {
-                // basicPanel.currentView = middlePanel.currentView
-                goToBasicAnimation.start()
-            } else {
-                // middlePanel.currentView = basicPanel.currentView
-                goToProAnimation.start()
-            }
-        }
 
         MouseArea {
             enabled: persistentSettings.customDecorations
@@ -244,11 +254,6 @@ ApplicationWindow {
     Component.onCompleted: {
         console.log("Started AppWindow");
         console.log("QT runtime: " + appWindow.qtRuntimeVersion);
-
-        // function createTimer(ms){
-        //     return Qt.createQmlObject("import QtQuick 2.7; import QtQuick.Layouts 1.2; import QtQuick.Controls 2.0; Timer { interval: "+ms+"; running: true; repeat: true; signal onTriggeredState; onTriggered: onTriggeredState(); }", appWindow);
-        //     // var ctx = Qt.createComponent(timer);
-        // }
     }
 
     // Choose blockchain folder
@@ -297,6 +302,10 @@ ApplicationWindow {
         }
     }
 
+    function changeWalletMode(mode){
+        return;
+    }
+
     StandardDialog {
         z: parent.z + 1
         id: confirmationDialog
@@ -311,10 +320,5 @@ ApplicationWindow {
             if (onRejectedCallback)
                 onRejectedCallback();
         }
-    }
-
-
-    MoneroComponents.LanguageSidebar {
-        id: languageSidebar
     }
 }
