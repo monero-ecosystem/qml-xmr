@@ -1,3 +1,189 @@
+#include <time.h>
+#include <stdlib.h>
+
+#include <QtCore/qabstractanimation.h>
+#include <QtCore/qdir.h>
+#include <QtCore/qmath.h>
+#include <QtCore/qdatetime.h>
+#include <QtCore/qpointer.h>
+#include <QtCore/qscopedpointer.h>
+#include <QtCore/qtextstream.h>
+
+#include <QtGui/QGuiApplication>
+
+#include <QtQml/qqml.h>
+#include <QtQml/qqmlengine.h>
+#include <QtQml/qqmlcomponent.h>
+#include <QtQml/qqmlcontext.h>
+
+#include <QtQuick/qquickitem.h>
+#include <QtQuick/qquickview.h>
+
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QFileDialog>
+
+#include <QtCore/QTranslator>
+#include <QtCore/QLibraryInfo>
+
+#include <QThread>
+#include <QFileSystemWatcher>
+
+#include <QStringList>
+#include <QDir>
+#include <QString>
+#include <QObject>
+#include <QFileInfo>
+#include <QResource>
+#include <QProcess>
+
+#include <src/oscursor.h>
+#include <src/livereload.h>
+#include <src/mocks/Wallet.h>
+#include <src/mocks/NetworkType.h>
+#include <src/utils.h>
+#include <src/mocks/QrcMock.h>
+
+
+//#define USE_ApplicationEngine
+
+#ifdef USE_ApplicationEngine
+	#include <QQmlApplicationEngine>
+#endif
+
+
+int main(int argc, char **argv)
+{
+    QString lol = QString("/Users/dsc/ClionProjects/monero-gui/qml.qrc");
+
+    int exitCode = 0;
+    srand(time(NULL));
+
+    StartOptions options;
+    QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts, options.contextSharing);  // QtWebEngine needs a shared context in order for the GPU thread to upload textures.
+
+    QGuiApplication app(argc, argv);
+    app.setApplicationName("QmlLive");
+    app.setOrganizationName("QtProject");
+    app.setOrganizationDomain("qt-project.org");
+
+    QStringList imports;
+    QStringList pluginPaths;
+    for (int i = 1; i < argc; ++i) {
+        if (*argv[i] != '-' && QFileInfo(QFile::decodeName(argv[i])).exists()) {
+            options.file = QUrl::fromLocalFile(argv[i]);
+            if(!options.file.isEmpty())
+                options.fileInfo = QFileInfo(argv[1]);
+        } else {
+            const QString lowerArgument = QString::fromLatin1(argv[i]).toLower();
+            if (lowerArgument == QLatin1String("--maximized"))
+                options.maximized = true;
+            else if (lowerArgument == QLatin1String("--fullscreen"))
+                options.fullscreen = true;
+            else if (lowerArgument == QLatin1String("--transparent"))
+                options.transparent = true;
+            else if (lowerArgument == QLatin1String("--clip"))
+                options.clip = true;
+            else if (lowerArgument == QLatin1String("--no-version-detection"))
+                options.versionDetection = false;
+            else if (lowerArgument == QLatin1String("--slow-animations"))
+                options.slowAnimations = true;
+            else if (lowerArgument == QLatin1String("--quit"))
+                options.quitImmediately = true;
+            else if (lowerArgument == QLatin1String("-translation"))
+                options.translationFile = QLatin1String(argv[++i]);
+            else if (lowerArgument == QLatin1String("--resize-to-root"))
+                options.resizeViewToRootItem = true;
+            else if (lowerArgument == QLatin1String("--multisample"))
+                options.multisample = true;
+            else if (lowerArgument == QLatin1String("--disable-context-sharing"))
+                options.contextSharing = false;
+            else if (lowerArgument == QLatin1String("-i") && i + 1 < argc)
+                imports.append(QString::fromLatin1(argv[++i]));
+            else if (lowerArgument == QLatin1String("-p") && i + 1 < argc)
+                pluginPaths.append(QString::fromLatin1(argv[++i]));
+            else if (lowerArgument == QLatin1String("--help")
+                     || lowerArgument == QLatin1String("-help")
+                     || lowerArgument == QLatin1String("--h")
+                     || lowerArgument == QLatin1String("-h"))
+                usage();
+        }
+    }
+
+    // validate incoming QML filename
+    if(options.file.isEmpty()){
+        usage();
+        return 0;
+    }
+
+    QString path_abs = options.fileInfo.absolutePath();
+    QString path_qml_qrc = path_abs + QString("/%1").arg("qml.qrc");
+
+	// bootstrap qml.qrc
+	if(!fileExists(path_qml_qrc)){
+		printErr(QString("Cannot find qml.qrc file, images will be missing. Tried: %1.").arg(path_qml_qrc));
+	} else {
+        QrcMock qmlQrcMock;
+        if(qmlQrcMock.load(path_qml_qrc)){
+            if(qmlQrcMock.compile()){
+                qmlQrcMock.install();
+            };
+        }
+	}
+
+	if (!options.file.isEmpty()) {
+		if (!options.versionDetection || checkVersion(options.file)) {
+#ifndef QT_NO_TRANSLATION
+			QTranslator translator;
+#endif
+
+			// TODO: as soon as the engine construction completes, the debug service is listening for connections.  But actually we aren't ready to debug anything.
+			QQmlEngine engine;
+			OSCursor cursor;
+
+			engine.rootContext()->setContextProperty("globalCursor", &cursor);
+			engine.rootContext()->setContextProperty("qt_version_str", QT_VERSION_STR);
+            qmlRegisterUncreatableType<Wallet>("moneroComponents.Wallet", 1, 0, "Wallet", "Wallet can't be instantiated directly");
+            qmlRegisterType<NetworkType>("moneroComponents.NetworkType", 1, 0, "NetworkType");
+
+			for (int i = 0; i < imports.size(); ++i)
+				engine.addImportPath(imports.at(i));
+			for (int i = 0; i < pluginPaths.size(); ++i)
+				engine.addPluginPath(pluginPaths.at(i));
+			if (options.file.isLocalFile()) {
+				QFileInfo fi(options.file.toLocalFile());
+#ifndef QT_NO_TRANSLATION
+				loadTranslationFile(translator, fi.path());
+#endif
+				loadDummyDataFiles(engine, fi.path());
+			}
+			QObject::connect(&engine, SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit()));
+
+			QPointer<QQmlComponent> component = new QQmlComponent(&engine);
+			component->loadUrl(options.file);
+
+			QQuickView* qxView = new QQuickView(&engine, NULL);
+			LiveReload liver(&engine, qxView, component, options);
+			if (options.quitImmediately)
+				QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
+
+			// Now would be a good time to inform the debug service to start listening.
+
+			exitCode = app.exec();
+
+#ifdef QML_RUNTIME_TESTING
+			RenderStatistics::printTotalStats();
+#endif
+			// Ready to exit. Notice that the component might be owned by
+			// QQuickView if one was created. That case is tracked by
+			// QPointer, so it is safe to delete the component here.
+			delete component;
+		}
+	}
+
+	return exitCode;
+}
+
+
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
@@ -30,656 +216,3 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#include <time.h>
-#include <stdlib.h>
-
-#include <QtCore/qabstractanimation.h>
-#include <QtCore/qdir.h>
-#include <QtCore/qmath.h>
-#include <QtCore/qdatetime.h>
-#include <QtCore/qpointer.h>
-#include <QtCore/qscopedpointer.h>
-#include <QtCore/qtextstream.h>
-
-#include <QtGui/QGuiApplication>
-
-#include <QtQml/qqml.h>
-#include <QtQml/qqmlengine.h>
-#include <QtQml/qqmlcomponent.h>
-#include <QtQml/qqmlcontext.h>
-
-#include <QtQuick/qquickitem.h>
-#include <QtQuick/qquickview.h>
-
-#ifdef QT_WIDGETS_LIB
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QFileDialog>
-#endif
-
-#include <QtCore/QTranslator>
-#include <QtCore/QLibraryInfo>
-
-#include <QThread>
-#include <QFileSystemWatcher>
-
-#include <QStringList>
-#include <QDir>
-#include <QString>
-#include <QFileInfo>
-#include <oscursor.h>
-
-
-//#define USE_ApplicationEngine
-
-#ifdef USE_ApplicationEngine
-	#include <QQmlApplicationEngine>
-#endif
-
-struct Options
-{
-	Options()
-		: originalQml(false)
-		, originalQmlRaster(false)
-		, maximized(false)
-		, fullscreen(false)
-		, transparent(false)
-		, clip(false)
-		, versionDetection(true)
-		, slowAnimations(false)
-		, quitImmediately(false)
-		, resizeViewToRootItem(false)
-		, multisample(false)
-		, contextSharing(true)
-	{
-	}
-
-	QUrl file;
-	bool originalQml;
-	bool originalQmlRaster;
-	bool maximized;
-	bool fullscreen;
-	bool transparent;
-	bool clip;
-	bool versionDetection;
-	bool slowAnimations;
-	bool quitImmediately;
-	bool resizeViewToRootItem;
-	bool multisample;
-	bool contextSharing;
-	QString translationFile;
-};
-
-
-QQuickWindow * createWindow(QQmlEngine * engine_handler
-				  , QQuickView* qxView, QPointer<QQmlComponent> component
-				  , Options options
-				  , QQuickWindow * window = NULL
-				  ){
-
-	if ( !component->isReady() ) {
-		QStringList list {
-			"¯\\_(ツ)_/¯",
-			"̿༼ つ ◕_◕ ༽つ",
-			"(ノಠ益ಠ)ノ彡┻━┻",
-			"ლ(ಠ益ಠლ)",
-			"┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻",
-			"(¬_¬)",
-			"╚(ಠ_ಠ)=┐",
-			"ಠ╭╮ಠ",
-			"(ง'̀-'́)ง"};
-
-		fprintf(stderr, "QML Error %s\n%s\n",
-				qPrintable(list[rand()%(list.size()-1)+0]),
-				qPrintable(component->errorString()));
-		exit(0);
-	}
-
-	QObject *topLevel = component->create();
-	if (!topLevel && component->isError()) {
-		fprintf(stderr, "Error:\n%s\n", qPrintable(component->errorString()));
-		exit(0);
-	}
-
-	QQuickWindow * r_window;
-
-	//Oh scoped pointer
-//	QScopedPointer<QQuickWindow> window(qobject_cast<QQuickWindow *>(topLevel));
-//	if (NULL == window) window = qobject_cast<QQuickWindow *>(topLevel);
-	if (window) {
-		window->close();
-	};
-	window = qobject_cast<QQuickWindow *>(topLevel);
-	r_window = window;
-	qDebug() << r_window << window;
-
-	if (window) {
-#ifdef USE_ApplicationEngine
-		delete(window);
-		engine_handler = new QQmlApplicationEngine();
-		qobject_cast<QQmlApplicationEngine *>(engine_handler)->load(options.file);
-		qobject_cast<QQuickWindow *>(qobject_cast<QQmlApplicationEngine *>(engine_handler)->rootObjects().value(0))->show();
-		return engine_handler;
-#else
-		engine_handler->setIncubationController(window->incubationController());
-#endif
-	} else {
-		QQuickItem *contentItem = qobject_cast<QQuickItem *>(topLevel);
-		if (contentItem) {
-			//QQuickView* qxView = new QQuickView(&engine, NULL);
-//			window.reset(qxView);
-			window = qobject_cast<QQuickWindow *>(qxView);
-			// Set window default properties; the qml can still override them
-			QString oname = contentItem->objectName();
-			window->setTitle(oname.isEmpty() ? QString::fromLatin1("QmlLive") : QString::fromLatin1("QmlLive: ") + oname);
-			if (options.resizeViewToRootItem)
-				qxView->setResizeMode(QQuickView::SizeViewToRootObject);
-			else
-				qxView->setResizeMode(QQuickView::SizeRootObjectToView);
-            qxView->setSource(QUrl());
-			qxView->setContent(options.file, component, contentItem);
-		}
-	}
-
-	if (window) {
-		QSurfaceFormat surfaceFormat = window->requestedFormat();
-		if (options.multisample)
-			surfaceFormat.setSamples(16);
-		if (options.transparent) {
-			surfaceFormat.setAlphaBufferSize(8);
-			window->setClearBeforeRendering(true);
-			window->setColor(QColor(Qt::transparent));
-			window->setFlags(Qt::FramelessWindowHint);
-		}
-		window->setFormat(surfaceFormat);
-
-		if (window->flags() == Qt::Window) // Fix window flags unless set by QML.
-			window->setFlags(Qt::Window | Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint | Qt::WindowFullscreenButtonHint);
-
-		if (options.fullscreen)
-			window->showFullScreen();
-		else if (options.maximized)
-			window->showMaximized();
-		else if (!window->isVisible())
-			window->show();
-	}
-
-	return r_window;
-}
-
-class LiveReload: public QObject{
-	Q_OBJECT
-public:
-	LiveReload(QQmlEngine * engine_handler
-			   , QQuickView* qxView, QPointer<QQmlComponent> component
-			   , Options options
-			   );
-private:
-	QFileSystemWatcher watcher;
-	QQmlEngine *engine_handler;
-	QQuickView* qxView;
-	QPointer<QQmlComponent> component;
-	Options options;
-	QQuickWindow * window;
-
-    void subFoldersList(QString folder, QStringList *dirList)
-    {
-        QDir dir(folder);
-        dir.setFilter(QDir::Dirs);
-
-        QFileInfoList list = dir.entryInfoList();
-
-        for (int i = 0; i < list.size(); ++i) {
-            QFileInfo fileInfo = list.at(i);
-            if (fileInfo.fileName() != "." && fileInfo.fileName() != "..") {
-                QString folderPath = fileInfo.path() + "/" + fileInfo.fileName();
-                *dirList << folderPath;
-                subFoldersList(folderPath, dirList);
-            }
-        }
-    }
-
-private slots:
-	void fileChanged(const QString & path) {
-		qDebug() << "file changed: " << path;
-
-		engine_handler->clearComponentCache();
-		QThread::msleep(50);
-#ifdef USE_ApplicationEngine
-		qobject_cast<QQmlApplicationEngine *>(engine_handler)->load(options.file);
-		qobject_cast<QQuickWindow *>(qobject_cast<QQmlApplicationEngine *>(engine_handler)->rootObjects().value(0))->show();
-#else
-		component = new QQmlComponent(engine_handler);
-		component->loadUrl(options.file);
-		window = createWindow(engine_handler, qxView, component, options, window);
-#endif
-	}
-};
-
-LiveReload::LiveReload(QQmlEngine * a_engine_handler
-					   , QQuickView* a_qxView, QPointer<QQmlComponent> a_component
-					   , Options a_options
-					   )
-	:QObject(){
-
-	engine_handler = a_engine_handler;
-	qxView = a_qxView;
-	component = a_component;
-	options = a_options;
-//#ifdef USE_ApplicationEngine
-//	engine_handler = qobject_cast<QQmlApplicationEngine *>(createWindow(engine_handler, qxView, component, options));
-//#else
-	window = createWindow(engine_handler, qxView, component, options);
-//#endif
-//
-	QFileInfo file(options.file.toLocalFile());
-    QStringList list;
-    list << file.path();
-    QStringList *dirList;
-    dirList = &list;
-    this->subFoldersList(file.path(), dirList);
-    watcher.addPaths(*dirList);
-
-	connect(&watcher, SIGNAL(directoryChanged(const QString &)),
-	  this, SLOT(fileChanged(const QString &)));
-	connect(&watcher, SIGNAL(fileChanged(const QString &)),
-	  this, SLOT(fileChanged(const QString &)));
-}
-
-#ifdef QML_RUNTIME_TESTING
-class RenderStatistics
-{
-public:
-	static void updateStats();
-	static void printTotalStats();
-private:
-	static QVector<qreal> timePerFrame;
-	static QVector<int> timesPerFrames;
-};
-
-QVector<qreal> RenderStatistics::timePerFrame;
-QVector<int> RenderStatistics::timesPerFrames;
-
-void RenderStatistics::updateStats()
-{
-	static QTime time;
-	static int frames;
-	static int lastTime;
-
-	if (frames == 0) {
-		time.start();
-	} else {
-		int elapsed = time.elapsed();
-		timesPerFrames.append(elapsed - lastTime);
-		lastTime = elapsed;
-
-		if (elapsed > 5000) {
-			qreal avgtime = elapsed / (qreal) frames;
-			qreal var = 0;
-			for (int i = 0; i < timesPerFrames.size(); ++i) {
-				qreal diff = timesPerFrames.at(i) - avgtime;
-				var += diff * diff;
-			}
-			var /= timesPerFrames.size();
-
-			printf("Average time per frame: %f ms (%i fps), std.dev: %f ms\n", avgtime, qRound(1000. / avgtime), qSqrt(var));
-
-			timePerFrame.append(avgtime);
-			timesPerFrames.clear();
-			time.start();
-			lastTime = 0;
-			frames = 0;
-		}
-	}
-	++frames;
-}
-
-void RenderStatistics::printTotalStats()
-{
-	int count = timePerFrame.count();
-	if (count == 0)
-		return;
-
-	qreal minTime = 0;
-	qreal maxTime = 0;
-	qreal avg = 0;
-	for (int i = 0; i < count; ++i) {
-		minTime = minTime == 0 ? timePerFrame.at(i) : qMin(minTime, timePerFrame.at(i));
-		maxTime = qMax(maxTime, timePerFrame.at(i));
-		avg += timePerFrame.at(i);
-	}
-	avg /= count;
-
-	puts(" ");
-	puts("----- Statistics -----");
-	printf("Average time per frame: %f ms (%i fps)\n", avg, qRound(1000. / avg));
-	printf("Best time per frame: %f ms (%i fps)\n", minTime, int(1000 / minTime));
-	printf("Worst time per frame: %f ms (%i fps)\n", maxTime, int(1000 / maxTime));
-	puts("----------------------");
-	puts(" ");
-}
-#endif
-
-#if defined(QMLSCENE_BUNDLE)
-QFileInfoList findQmlFiles(const QString &dirName)
-{
-	QDir dir(dirName);
-
-	QFileInfoList ret;
-	if (dir.exists()) {
-		QFileInfoList fileInfos = dir.entryInfoList(QStringList() << "*.qml",
-													QDir::Files | QDir::AllDirs | QDir::NoDotAndDotDot);
-
-		foreach (QFileInfo fileInfo, fileInfos) {
-			if (fileInfo.isDir())
-				ret += findQmlFiles(fileInfo.filePath());
-			else if (fileInfo.fileName().length() > 0 && fileInfo.fileName().at(0).isLower())
-				ret.append(fileInfo);
-		}
-	}
-
-	return ret;
-}
-
-static int displayOptionsDialog(Options *options)
-{
-	QDialog dialog;
-
-	QFormLayout *layout = new QFormLayout(&dialog);
-
-	QComboBox *qmlFileComboBox = new QComboBox(&dialog);
-	QFileInfoList fileInfos = findQmlFiles(":/bundle") + findQmlFiles("./qmlscene-resources");
-
-	foreach (QFileInfo fileInfo, fileInfos)
-		qmlFileComboBox->addItem(fileInfo.dir().dirName() + "/" + fileInfo.fileName(), QVariant::fromValue(fileInfo));
-
-	QCheckBox *originalCheckBox = new QCheckBox(&dialog);
-	originalCheckBox->setText("Use original QML viewer");
-	originalCheckBox->setChecked(options->originalQml);
-
-	QCheckBox *fullscreenCheckBox = new QCheckBox(&dialog);
-	fullscreenCheckBox->setText("Start fullscreen");
-	fullscreenCheckBox->setChecked(options->fullscreen);
-
-	QCheckBox *maximizedCheckBox = new QCheckBox(&dialog);
-	maximizedCheckBox->setText("Start maximized");
-	maximizedCheckBox->setChecked(options->maximized);
-
-	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-													   Qt::Horizontal,
-													   &dialog);
-	QObject::connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-	QObject::connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
-
-	layout->addRow("Qml file:", qmlFileComboBox);
-	layout->addWidget(originalCheckBox);
-	layout->addWidget(maximizedCheckBox);
-	layout->addWidget(fullscreenCheckBox);
-	layout->addWidget(buttonBox);
-
-	int result = dialog.exec();
-	if (result == QDialog::Accepted) {
-		QVariant variant = qmlFileComboBox->itemData(qmlFileComboBox->currentIndex());
-		QFileInfo fileInfo = variant.value<QFileInfo>();
-
-		if (fileInfo.canonicalFilePath().startsWith(":"))
-			options->file = QUrl("qrc" + fileInfo.canonicalFilePath());
-		else
-			options->file = QUrl::fromLocalFile(fileInfo.canonicalFilePath());
-		options->originalQml = originalCheckBox->isChecked();
-		options->maximized = maximizedCheckBox->isChecked();
-		options->fullscreen = fullscreenCheckBox->isChecked();
-	}
-	return result;
-}
-#endif
-
-static bool checkVersion(const QUrl &url)
-{
-	if (!qgetenv("QMLSCENE_IMPORT_NAME").isEmpty())
-		fprintf(stderr, "QMLSCENE_IMPORT_NAME is no longer supported.\n");
-
-	QString fileName = url.toLocalFile();
-	if (fileName.isEmpty()) {
-		fprintf(stderr, "qmlscene: filename required.\n");
-		return false;
-	}
-
-	QFile f(fileName);
-	if (!f.open(QFile::ReadOnly | QFile::Text)) {
-		fprintf(stderr, "qmlscene: failed to check version of file '%s', could not open...\n",
-				 qPrintable(fileName));
-		return false;
-	}
-
-	QRegExp quick1("^\\s*import +QtQuick +1\\.\\w*");
-	QRegExp qt47("^\\s*import +Qt +4\\.7");
-
-	QTextStream stream(&f);
-	bool codeFound= false;
-	while (!codeFound) {
-		QString line = stream.readLine();
-		if (line.contains("{")) {
-			codeFound = true;
-		} else {
-			QString import;
-			if (quick1.indexIn(line) >= 0)
-				import = quick1.cap(0).trimmed();
-			else if (qt47.indexIn(line) >= 0)
-				import = qt47.cap(0).trimmed();
-
-			if (!import.isNull()) {
-				fprintf(stderr, "qmlscene: '%s' is no longer supported.\n"
-						 "Use qmlviewer to load file '%s'.\n",
-						 qPrintable(import),
-						 qPrintable(fileName));
-				return false;
-			}
-		}
-	}
-
-	return true;
-}
-
-static void displayFileDialog(Options *options)
-{
-#if defined(QT_WIDGETS_LIB) && !defined(QT_NO_FILEDIALOG)
-	QString fileName = QFileDialog::getOpenFileName(0, "Open QML file", QString(), "QML Files (*.qml)");
-	if (!fileName.isEmpty()) {
-		QFileInfo fi(fileName);
-		options->file = QUrl::fromLocalFile(fi.canonicalFilePath());
-	}
-#else
-	Q_UNUSED(options);
-	puts("No filename specified...");
-#endif
-}
-
-#ifndef QT_NO_TRANSLATION
-static void loadTranslationFile(QTranslator &translator, const QString& directory)
-{
-	translator.load(QLatin1String("qml_" )+QLocale::system().name(), directory + QLatin1String("/i18n"));
-	QCoreApplication::installTranslator(&translator);
-}
-#endif
-
-static void loadDummyDataFiles(QQmlEngine &engine, const QString& directory)
-{
-	QDir dir(directory+"/dummydata", "*.qml");
-	QStringList list = dir.entryList();
-	for (int i = 0; i < list.size(); ++i) {
-		QString qml = list.at(i);
-		QQmlComponent comp(&engine, dir.filePath(qml));
-		QObject *dummyData = comp.create();
-
-		if(comp.isError()) {
-			QList<QQmlError> errors = comp.errors();
-			foreach (const QQmlError &error, errors)
-				fprintf(stderr, "%s\n", qPrintable(error.toString()));
-		}
-
-		if (dummyData) {
-			fprintf(stderr, "Loaded dummy data: %s\n", qPrintable(dir.filePath(qml)));
-			qml.truncate(qml.length()-4);
-			engine.rootContext()->setContextProperty(qml, dummyData);
-			dummyData->setParent(&engine);
-		}
-	}
-}
-
-static void usage()
-{
-	puts("Usage: qml-xmr [options] <filename>");
-	puts(" Options:");
-	puts("  --maximized ............................... Run maximized");
-	puts("  --fullscreen .............................. Run fullscreen");
-	puts("  --transparent ............................. Make the window transparent");
-	puts("  --multisample ............................. Enable multisampling (OpenGL anti-aliasing)");
-	puts("  --no-version-detection .................... Do not try to detect the version of the .qml file");
-	puts("  --slow-animations ......................... Run all animations in slow motion");
-	puts("  --resize-to-root .......................... Resize the window to the size of the root item");
-	puts("  --quit .................................... Quit immediately after starting");
-	puts("  --disable-context-sharing ................. Disable the use of a shared GL context for QtQuick Windows");
-	puts("  -I <path> ................................. Add <path> to the list of import paths");
-	puts("  -P <path> ................................. Add <path> to the list of plugin paths");
-	puts("  -translation <translationfile> ............ Set the language to run in");
-
-	puts(" ");
-	exit(1);
-}
-
-int main(int argc, char ** argv)
-{
-	srand(time(NULL));
-	Options options;
-
-	QStringList imports;
-	QStringList pluginPaths;
-	for (int i = 1; i < argc; ++i) {
-		if (*argv[i] != '-' && QFileInfo(QFile::decodeName(argv[i])).exists()) {
-			options.file = QUrl::fromLocalFile(argv[i]);
-		} else {
-			const QString lowerArgument = QString::fromLatin1(argv[i]).toLower();
-			if (lowerArgument == QLatin1String("--maximized"))
-				options.maximized = true;
-			else if (lowerArgument == QLatin1String("--fullscreen"))
-				options.fullscreen = true;
-			else if (lowerArgument == QLatin1String("--transparent"))
-				options.transparent = true;
-			else if (lowerArgument == QLatin1String("--clip"))
-				options.clip = true;
-			else if (lowerArgument == QLatin1String("--no-version-detection"))
-				options.versionDetection = false;
-			else if (lowerArgument == QLatin1String("--slow-animations"))
-				options.slowAnimations = true;
-			else if (lowerArgument == QLatin1String("--quit"))
-				options.quitImmediately = true;
-		   else if (lowerArgument == QLatin1String("-translation"))
-				options.translationFile = QLatin1String(argv[++i]);
-			else if (lowerArgument == QLatin1String("--resize-to-root"))
-				options.resizeViewToRootItem = true;
-			else if (lowerArgument == QLatin1String("--multisample"))
-				options.multisample = true;
-			else if (lowerArgument == QLatin1String("--disable-context-sharing"))
-				options.contextSharing = false;
-			else if (lowerArgument == QLatin1String("-i") && i + 1 < argc)
-				imports.append(QString::fromLatin1(argv[++i]));
-			else if (lowerArgument == QLatin1String("-p") && i + 1 < argc)
-				pluginPaths.append(QString::fromLatin1(argv[++i]));
-			else if (lowerArgument == QLatin1String("--help")
-					 || lowerArgument == QLatin1String("-help")
-					 || lowerArgument == QLatin1String("--h")
-					 || lowerArgument == QLatin1String("-h"))
-				usage();
-		}
-	}
-
-	// QtWebEngine needs a shared context in order for the GPU thread to
-	// upload textures.
-	QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts, options.contextSharing);
-
-	QGuiApplication app(argc, argv);
-	app.setApplicationName("QmlLive");
-	app.setOrganizationName("QtProject");
-	app.setOrganizationDomain("qt-project.org");
-
-#ifndef QT_NO_TRANSLATION
-	QTranslator translator;
-	QTranslator qtTranslator;
-	QString sysLocale = QLocale::system().name();
-	if (qtTranslator.load(QLatin1String("qt_") + sysLocale, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
-		app.installTranslator(&qtTranslator);
-	if (translator.load(QLatin1String("qmlscene_") + sysLocale, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
-		app.installTranslator(&translator);
-
-	QTranslator qmlTranslator;
-	if (!options.translationFile.isEmpty()) {
-		if (qmlTranslator.load(options.translationFile)) {
-			app.installTranslator(&qmlTranslator);
-		} else {
-			fprintf(stderr, "Could not load the translation file \"%s\"\n",
-					qPrintable(options.translationFile));
-		}
-	}
-#endif
-
-	if (options.file.isEmpty())
-#if defined(QMLSCENE_BUNDLE)
-		displayOptionsDialog(&options);
-#else
-		displayFileDialog(&options);
-#endif
-
-	int exitCode = 0;
-
-	if (!options.file.isEmpty()) {
-		if (!options.versionDetection || checkVersion(options.file)) {
-#ifndef QT_NO_TRANSLATION
-			QTranslator translator;
-#endif
-
-			// TODO: as soon as the engine construction completes, the debug service is
-			// listening for connections.  But actually we aren't ready to debug anything.
-			QQmlEngine engine;
-			OSCursor cursor;
-
-			engine.rootContext()->setContextProperty("globalCursor", &cursor);
-			engine.rootContext()->setContextProperty("qt_version_str", QT_VERSION_STR);
-			for (int i = 0; i < imports.size(); ++i)
-				engine.addImportPath(imports.at(i));
-			for (int i = 0; i < pluginPaths.size(); ++i)
-				engine.addPluginPath(pluginPaths.at(i));
-			if (options.file.isLocalFile()) {
-				QFileInfo fi(options.file.toLocalFile());
-#ifndef QT_NO_TRANSLATION
-				loadTranslationFile(translator, fi.path());
-#endif
-				loadDummyDataFiles(engine, fi.path());
-			}
-			QObject::connect(&engine, SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit()));
-
-			QPointer<QQmlComponent> component = new QQmlComponent(&engine);
-			component->loadUrl(options.file);
-			QQuickView* qxView = new QQuickView(&engine, NULL);
-			LiveReload liver(&engine, qxView, component, options);
-			if (options.quitImmediately)
-				QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
-
-			// Now would be a good time to inform the debug service to start listening.
-
-			exitCode = app.exec();
-
-#ifdef QML_RUNTIME_TESTING
-			RenderStatistics::printTotalStats();
-#endif
-			// Ready to exit. Notice that the component might be owned by
-			// QQuickView if one was created. That case is tracked by
-			// QPointer, so it is safe to delete the component here.
-			delete component;
-		}
-	}
-
-	return exitCode;
-}
-
-#include "main.moc"

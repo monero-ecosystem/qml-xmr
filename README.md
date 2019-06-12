@@ -1,20 +1,18 @@
 qml-xmr
 ==============
 
-### What is this?
-
-A lightweight QML scene you can easily reload. Solves the problem of having to wait on monero-gui compiles to see your latest QML/JS changes. Components from the monero-gui repository are available to you via a submodule. Best used as a component prototyping tool.
+A lightweight QML scene that resembles the Monero GUI. Solves the problem of having to wait on 10 second compiles. 
 
 ### What is it not?
 
-This is not a replacement of the Monero GUI. As previously mentioned, it was meant to make individual screens or components.
+This is not a replacement of the Monero GUI. It is meant to make individual screens or components.
 
 ### Project layout
 
 Included in this repository are:
 
-- The folder `qml-xmr` contains a simple Qt/QML program that you should put into `/usr/local/bin/` after compiling
-- The folder `app` contains an example Qt application that uses a Monero component.
+- Folder `qml-xmr` contains a simple Qt/QML program that you should put into `/usr/local/bin/` after compiling
+- Folder `app` contains an example Qt application that uses a Monero component.
 
 ### Requirements:
 
@@ -30,46 +28,32 @@ Using Qt version 5.9.7 in /home/dsc/Qt5.9/5.9.7/gcc_64/lib
 
 Make sure to correctly set your environment. Consult `qtchooser -print-env`
 
-### Installation
-
-Either use cmake or qmake to compile the program.
-
-#### cmake
+#### Installation
 
 ```
 cd qml-xmr
-cmake .
+cmake . -DCMAKE_PREFIX_PATH=/home/dsc/Qt5.9/5.9.7/gcc_64.
 make
 sudo make install
 ```
 
 If cmake cannot find your Qt installation, or it finds the wrong version use (replace path):
 
-```sh
-cd qml-xmr
-cmake . -DCMAKE_PREFIX_PATH=/home/dsc/Qt5.9/5.9.7/gcc_64
-make
-sudo make install
-```
-
-#### qmake
-
-```
-cd qml-xmr
-qmake
-sudo make
-```
-
 Compiled binary will be found at `/usr/local/bin/qml-xmr`.
 
-Update the `monero-gui` submodule:
+#### Monero-GUI
+
+Folder `monero-gui` is the submodule that includes the Monero GUI. In `app/` there are several 
+symlinks pointing to this submodule.
+
+Update it regularly, or alternatively symlink it to your own local version of the Monero-GUI.
 
 ```
 git submodule init
 git submodule update
 ```
 
-## How to use
+## Development workflow
 
 The recommended way is to use the Sublime Text 3 to edit `app/Mock.qml`. Launch Sublime Text 3 and make a new build system:
 
@@ -91,7 +75,6 @@ The recommended way is to use the Sublime Text 3 to edit `app/Mock.qml`. Launch 
 
 Modify `Mock.qml` as you please. Press `CTRL-B` to run the application.
 
-### Tips
+### Tip
 
-- `app/monero-gui.qml` is the entry point of the application, you shouldn't need to edit it. It includes `Mock.qml` automatically.
-- Update the submodule `monero-gui` regularly
+`app/monero-gui.qml` is the entry point of the application, you shouldn't need to edit it. It includes `Mock.qml` automatically.

@@ -1,7 +1,6 @@
 #ifndef OSCURSOR_H
 #define OSCURSOR_H
 
-
 #include <QObject>
 #include <QString>
 #include <QPoint>
