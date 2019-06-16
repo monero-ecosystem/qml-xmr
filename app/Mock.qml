@@ -5,9 +5,6 @@ import QtQuick.Controls 2.0
 import "components" as MoneroComponents
 
 ColumnLayout {
-    anchors.top: parent.top
-    anchors.left: parent.left
-    anchors.right: parent.right
     anchors.margins: (isMobile)? 17 : 20
     spacing: 32
 
@@ -21,5 +18,9 @@ ColumnLayout {
     MoneroComponents.StandardButton{
         text: "Submit"
         small: true
+    }
+
+    Item {
+        Layout.fillHeight: true
     }
 }

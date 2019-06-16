@@ -3,6 +3,8 @@ qml-xmr
 
 A lightweight QML scene that resembles the Monero GUI. Solves the problem of having to wait on 10 second compiles. 
 
+![https://i.imgur.com/NCeFEWm.png](https://i.imgur.com/NCeFEWm.png)
+
 ### What is it not?
 
 This is not a replacement of the Monero GUI. It is meant to make individual screens or components.
@@ -32,7 +34,7 @@ Make sure to correctly set your environment. Consult `qtchooser -print-env`
 
 ```
 cd qml-xmr
-cmake . -DCMAKE_PREFIX_PATH=/home/dsc/Qt5.9/5.9.7/gcc_64.
+cmake . -DCMAKE_PREFIX_PATH=/home/dsc/Qt5.9/5.9.7/gcc_64
 make
 sudo make install
 ```

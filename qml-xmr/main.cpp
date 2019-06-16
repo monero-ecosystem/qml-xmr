@@ -140,8 +140,10 @@ int main(int argc, char **argv)
 			QQmlEngine engine;
 			OSCursor cursor;
 
+            engine.addImportPath(":/fonts");
 			engine.rootContext()->setContextProperty("globalCursor", &cursor);
 			engine.rootContext()->setContextProperty("qt_version_str", QT_VERSION_STR);
+
             qmlRegisterUncreatableType<Wallet>("moneroComponents.Wallet", 1, 0, "Wallet", "Wallet can't be instantiated directly");
             qmlRegisterType<NetworkType>("moneroComponents.NetworkType", 1, 0, "NetworkType");
 

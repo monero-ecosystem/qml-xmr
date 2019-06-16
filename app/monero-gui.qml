@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
 import QtGraphicalEffects 1.0
+import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
@@ -8,6 +9,7 @@ import QtQuick.Dialogs 1.2
 import "."
 import "components"
 import "components" as MoneroComponents
+import "components/effects" as MoneroEffects
 import "mock/Windows.js" as Windows
 import "mock/Version.js" as Version
 import "mock/NetworkType.js" as NetworkType
@@ -159,15 +161,30 @@ ApplicationWindow {
 
     objectName: "appWindow"
     visible: true
-    color: "black"
     // flags: persistentSettings.customDecorations ? Windows.flagsCustomDecorations : Windows.flags
     flags: Windows.flagsCustomDecorations
 
+    MoneroEffects.GradientBackground {
+        anchors.fill: parent
+        fallBackColor: MoneroComponents.Style.middlePanelBackgroundColor
+        initialStartColor: MoneroComponents.Style.middlePanelBackgroundGradientStart
+        initialStopColor: MoneroComponents.Style.middlePanelBackgroundGradientStop
+        blackColorStart: MoneroComponents.Style._b_middlePanelBackgroundGradientStart
+        blackColorStop: MoneroComponents.Style._b_middlePanelBackgroundGradientStop
+        whiteColorStart: MoneroComponents.Style._w_middlePanelBackgroundGradientStart
+        whiteColorStop: MoneroComponents.Style._w_middlePanelBackgroundGradientStop
+        start: Qt.point(0, 0)
+        end: Qt.point(height, width)
+    }
+
     // mock.qml
-    WizardController{
+    Mock {
+        anchors.topMargin: 80
         anchors.fill: parent
     }
 
+    property int minWidth: 326
+    property int minHeight: 400
     MouseArea {
         id: resizeArea
         hoverEnabled: true

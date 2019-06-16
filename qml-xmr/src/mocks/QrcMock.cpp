@@ -45,8 +45,8 @@ int QrcMock::compile(){
     this->m_path_compiled = path_tmp_compiled;
 
     // cleanup
-    QFile file_tmp(path_tmp.absoluteFilePath());
-    file_tmp.remove();
+    // QFile file_tmp(path_tmp.absoluteFilePath());
+    // file_tmp.remove();
     return 1;
 }
 
@@ -57,14 +57,14 @@ int QrcMock::load(const QString &path){
     QByteArray xmlText;
 
     QStringList matches;
-    QRegularExpression reA("\\<file\\>([@\\-\\w+\\/]+[\\.png|\\.svg|\\.ttf]+)<\\/file>");
+    QRegularExpression reA("\\<file\\>([@\\-\\w+\\/]+(qmldir|\\.png|\\.qml|\\.svg|\\.ttf))\\<\\/file\\>");
     QRegularExpressionMatchIterator i = reA.globalMatch(data);
     int matched = 0;
     while (i.hasNext()) {
         QRegularExpressionMatch match = i.next();
         if (match.hasMatch()) {
             QString path_match = QString("%1/%2").arg(this->m_path_info.absolutePath(), match.captured(1));
-            if(fileExists(path_match)){
+            if(fileExists(path_match) || path_match.endsWith("qmldir")){
                 matched += 1;
                 matches.append(match.captured(0));
             } else {
@@ -75,12 +75,11 @@ int QrcMock::load(const QString &path){
     }
 
     if(matched == 0){
-        qCritical() << QString("Read \"%1\", no content").arg(path);
+        qCritical() << QString("Read \"%1\", no matches").arg(path);
         return matched;
     }
 
     qDebug() << QString("Rebuilt qrc with %1 entries").arg(QString::number(matched));
-
     QString qrc_stripped = QString("<RCC>\n    <qresource prefix=\"/\">\n        %1\n    </qresource>\n</RCC>").arg(matches.join("\n        "));
     this->m_data = qrc_stripped;
 
