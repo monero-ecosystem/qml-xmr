@@ -18,6 +18,9 @@ import "wizard"
 ApplicationWindow {
     id: appWindow
     title: "Monero"
+    // centered
+    x: Screen.width / 2 - width / 2
+    y: Screen.height / 2 - height / 2
     width: 940
     height: 800
 

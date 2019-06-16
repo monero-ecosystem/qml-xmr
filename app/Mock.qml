@@ -9,7 +9,6 @@ ColumnLayout {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.margins: (isMobile)? 17 : 20
-    anchors.topMargin: 80 * scaleRatio
     spacing: 32
 
     MoneroComponents.LineEdit {
