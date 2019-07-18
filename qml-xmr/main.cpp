@@ -42,6 +42,7 @@
 #include <src/mocks/NetworkType.h>
 #include <src/utils.h>
 #include <src/mocks/QrcMock.h>
+#include <src/mocks/clipboard.h>
 
 
 //#define USE_ApplicationEngine
@@ -145,6 +146,7 @@ int main(int argc, char **argv)
 			engine.rootContext()->setContextProperty("qt_version_str", QT_VERSION_STR);
 
             qmlRegisterUncreatableType<Wallet>("moneroComponents.Wallet", 1, 0, "Wallet", "Wallet can't be instantiated directly");
+            qmlRegisterType<clipboardAdapter>("moneroComponents.Clipboard", 1, 0, "Clipboard");
             qmlRegisterType<NetworkType>("moneroComponents.NetworkType", 1, 0, "NetworkType");
 
 			for (int i = 0; i < imports.size(); ++i)

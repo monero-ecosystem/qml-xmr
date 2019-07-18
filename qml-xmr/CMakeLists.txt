@@ -35,7 +35,10 @@ set(SOURCE_FILES
     src/mocks/Wallet.h
     src/mocks/NetworkType.h
     main.cpp
-		src/mocks/QrcMock.cpp src/mocks/QrcMock.h)
+	src/mocks/QrcMock.cpp 
+	src/mocks/QrcMock.h 
+	src/mocks/clipboard.cpp 
+	src/mocks/clipboard.h)
 
 add_executable(qml-xmr ${SOURCE_FILES})
 
